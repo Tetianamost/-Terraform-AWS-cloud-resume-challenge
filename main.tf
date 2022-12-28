@@ -4,7 +4,6 @@ provider "aws" {
 }
 variable "s3-endpoint" {
   type = string
-  default = "http://my-resume-website-latest.s3-website-us-east-1.amazonaws.com"
 }
 
 resource "aws_s3_bucket" "resume_website" {
