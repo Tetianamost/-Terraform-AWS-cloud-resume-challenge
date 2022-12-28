@@ -1,4 +1,3 @@
-
 provider "aws" {
   region = "us-east-1"
 }
@@ -6,11 +5,9 @@ provider "aws" {
 resource "aws_s3_bucket" "resume_website" {
   bucket = "my-resume-website-latest"
   acl    = "public-read"
-
   website {
     index_document = "index.html"
-   
-  }
+   }
 }
 
 output "s3_website_endpoint" {
@@ -24,19 +21,13 @@ resource "aws_cloudfront_distribution" "resume_website" {
     s3_origin_config {
       origin_access_identity = "${aws_cloudfront_origin_access_identity.resume_website.cloudfront_access_identity_path}"
     }
-    custom_origin_config {
-      http_port              = "80"
-      https_port             = "443"
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
-    }
-
   }
 
   viewer_certificate {
     acm_certificate_arn = "${aws_acm_certificate.resume_website.arn}"
     ssl_support_method  = "sni-only"
   }
+
   enabled = true
 
   restrictions {
@@ -47,17 +38,13 @@ resource "aws_cloudfront_distribution" "resume_website" {
 
   aliases = ["resume.bythebeach.store", "bythebeach.store"]
 
-
   default_cache_behavior {
     target_origin_id = "my-resume-website-origin"
-
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD", "OPTIONS"]
-
     forwarded_values {
       query_string = false
-
       cookies {
         forward = "none"
       }
