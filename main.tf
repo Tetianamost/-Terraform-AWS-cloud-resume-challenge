@@ -145,6 +145,9 @@ resource "aws_route53_record" "resume_website" {
 }
 
 resource "aws_dynamodb_table" "resume_website" {
+  name           = "my-resume-website-table"
+  billing_mode   = "PROVISIONED"
+  
   attribute {
     name = "id"
     type = "S"
