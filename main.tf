@@ -25,6 +25,13 @@ resource "aws_cloudfront_distribution" "resume_website" {
       origin_access_identity = "${aws_cloudfront_origin_access_identity.resume_website.cloudfront_access_identity_path}"
     }
   }
+      custom_origin_config {
+      http_port              = "80"
+      https_port             = "443"
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
+    }
+    
   viewer_certificate {
     acm_certificate_arn = "${aws_acm_certificate.resume_website.arn}"
     ssl_support_method  = "sni-only"
