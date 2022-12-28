@@ -43,6 +43,9 @@ resource "aws_cloudfront_distribution" "resume_website" {
     }
   }
 }
+resource "aws_cloudfront_origin_access_identity" "resume_website" {
+  comment = "OAI for resume website"
+}
 
 resource "aws_acm_certificate" "resume_website" {
   domain_name       = "bythebeach.store"
