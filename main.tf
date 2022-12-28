@@ -74,7 +74,7 @@ resource "aws_s3_bucket_object" "lambda_zip" {
   bucket = "${aws_s3_bucket.resume_website.id}"
   key    = "lambda.zip"
   source = "lambda.zip"
-
+}
  
 
 
