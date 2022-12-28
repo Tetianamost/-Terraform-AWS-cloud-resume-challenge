@@ -69,12 +69,6 @@ resource "aws_lambda_function" "resume_website" {
   }
 }
 
-# Create a ZIP file containing the Lambda function code and dependencies
-resource "aws_s3_bucket_object" "lambda_zip" {
-  bucket = "${aws_s3_bucket.resume_website.id}"
-  key    = "lambda.zip"
-  source = "lambda.zip"
-}
  
 
 
