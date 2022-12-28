@@ -96,7 +96,7 @@ resource "aws_api_gateway_integration" "lambda_integration" {
 }
 EOF
   }
-   integration_id = "${aws_api_gateway_integration.lambda_integration.id}"
+  
   uri           = "${aws_lambda_function.resume_website.invoke_arn}"
 }
 resource "aws_api_gateway_method" "resume_website_get" {
