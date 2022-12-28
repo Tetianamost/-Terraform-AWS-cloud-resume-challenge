@@ -258,11 +258,11 @@ resource "aws_dynamodb_table" "resume_website" {
   }
 
    hash_key = "id"
-   range_key = "name"
+   range_key = "count"
 
   global_secondary_index {
-    name            = "name_index"
-    hash_key        = "name"
+    name            = "count_index"
+    hash_key        = "count"
     range_key       = "id"
     write_capacity  = 5
     read_capacity   = 5
