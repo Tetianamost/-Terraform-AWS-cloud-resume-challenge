@@ -27,6 +27,14 @@ resource "aws_cloudfront_distribution" "resume_website" {
     ssl_support_method  = "sni-only"
   }
   enabled = true
+   
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+  
   default_cache_behavior {
     target_origin_id = "S3Origin"
 
