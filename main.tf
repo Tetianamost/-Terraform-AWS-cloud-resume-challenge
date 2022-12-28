@@ -20,8 +20,8 @@ output "s3_website_endpoint" {
 resource "aws_cloudfront_distribution" "resume_website" {
   origin {
     domain_name = aws_s3_bucket.resume_website.website_endpoint
-    origin_id   = "S3Origin"
-
+        origin_id   = "my-resume-website-origin"
+    origin_id   = "my-resume-website-origin"
     s3_origin_config {
       origin_access_identity = "${aws_cloudfront_origin_access_identity.resume_website.cloudfront_access_identity_path}"
     }
@@ -38,9 +38,12 @@ resource "aws_cloudfront_distribution" "resume_website" {
       restriction_type = "none"
     }
   }
-aliases = ["resume.bythebeach.store", "bythebeach.store"]
+
+  aliases = ["resume.bythebeach.store", "bythebeach.store"]
+
+
   default_cache_behavior {
-    target_origin_id = "S3Origin"
+    target_origin_id = "my-resume-website-origin"
 
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
