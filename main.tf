@@ -65,6 +65,9 @@ resource "aws_acm_certificate" "resume_website" {
   domain_name       = "bythebeach.store"
   subject_alternative_names = ["*.bythebeach.store"]
   validation_method = "DNS"
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_api_gateway_rest_api" "resume_website" {
