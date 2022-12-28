@@ -19,7 +19,7 @@ output "s3_website_endpoint" {
 
 resource "aws_cloudfront_distribution" "resume_website" {
   origin {
-    domain_name = aws_s3_bucket.resume_website.website_endpoint
+    domain_name = ${aws_s3_bucket.resume_website.website_endpoint}
     origin_id   = "my-resume-website-origin"
     s3_origin_config {
       origin_access_identity = "${aws_cloudfront_origin_access_identity.resume_website.cloudfront_access_identity_path}"
@@ -31,7 +31,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
       origin_protocol_policy = "http-only"
       origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
     }
-    
+
   viewer_certificate {
     acm_certificate_arn = "${aws_acm_certificate.resume_website.arn}"
     ssl_support_method  = "sni-only"
