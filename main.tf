@@ -12,28 +12,35 @@ resource "aws_s3_bucket" "resume_website" {
   }
 }
 
+
 resource "aws_cloudfront_distribution" "resume_website" {
   origin {
-    domain_name = aws_s3_bucket.resume_website.website_endpoint
-    origin_id   = "S3-origin"
+    domain_name = aws_s3_bucket.resume_website.website_domain
+    origin_id   = "S3Origin"
+
+    s3_origin_config {
+      origin_access_identity = "${aws_cloudfront_origin_access_identity.resume_website.cloudfront_access_identity_path}"
+    }
   }
-   viewer_certificate {
+  viewer_certificate {
     acm_certificate_arn = "${aws_acm_certificate.resume_website.arn}"
     ssl_support_method  = "sni-only"
   }
 
-  enabled = true
-
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "S3-origin"
+    target_origin_id = "S3Origin"
 
     viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
 
-    min_ttl = 0
-    default_ttl = 3600
-    max_ttl = 86400
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
   }
 }
 
