@@ -26,7 +26,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
     acm_certificate_arn = "${aws_acm_certificate.resume_website.arn}"
     ssl_support_method  = "sni-only"
   }
-
+  enabled = true
   default_cache_behavior {
     target_origin_id = "S3Origin"
 
