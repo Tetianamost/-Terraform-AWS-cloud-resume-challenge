@@ -1,5 +1,14 @@
+terraform {
+  required_providers {
+    aws = {
+      version = "~> 4.48.0"
+    }
+    s3 = {
+      version = "~> 2.0.0"
+    }
+  }
+}
 provider "aws" {
-  version = "~> 4.48.0"
   region = "us-east-1"
 }
 
