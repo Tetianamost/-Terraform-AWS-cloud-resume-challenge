@@ -19,10 +19,12 @@ resource "aws_cloudfront_distribution" "resume_website" {
     domain_name = "www.example.com"
     origin_id   = "CustomOrigin"
 
-    custom_origin_config {
-      http_port      = 80
-      https_port     = 443
-      origin_protocol_policy = "http-only"
+   custom_origin_config {
+      origin_ssl_protocols = ["TLSv1", "TLSv1.1", "TLSv1.2"]
+      HTTP_port             = 80
+      HTTPS_port            = 443
+      origin_keepalive_timeout = 5
+      origin_protocol_policy   = "http-only"
     }
   }
 
