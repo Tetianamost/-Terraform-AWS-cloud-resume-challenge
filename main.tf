@@ -2,9 +2,6 @@
 provider "aws" {
   region = "us-east-1"
 }
-variable "s3-endpoint" {
-  type = string
-}
 
 resource "aws_s3_bucket" "resume_website" {
   bucket = "my-resume-website-latest"
