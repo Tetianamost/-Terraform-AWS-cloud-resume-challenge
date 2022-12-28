@@ -47,8 +47,8 @@ resource "aws_cloudfront_distribution" "resume_website" {
   default_cache_behavior {
     target_origin_id = "CustomOrigin"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    allowed_methods        = ["GET", "POST", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "POST", "HEAD", "OPTIONS"]
     forwarded_values {
       query_string = false
       cookies {
@@ -79,7 +79,43 @@ resource "aws_api_gateway_resource" "resume_website" {
   parent_id   = "${aws_api_gateway_rest_api.resume_website.root_resource_id}"
   path_part   = "resume"
 }
+resource "aws_api_gateway_method" "resume_website_get" {
+rest_api_id = "${aws_api_gateway_rest_api.resume_website.id}"
+resource_id = "${aws_api_gateway_resource.resume_website.id}"
+http_method = "GET"
+authorization = "NONE"
 
+request_parameters = {
+"method.request.querystring.key" = true
+}
+
+integration {
+type = "AWS_PROXY"
+integration_http_method = "POST"
+uri = "${aws_lambda_function.resume_website.invoke_arn}"
+}
+}
+resource "aws_api_gateway_method_response" "resume_website_get_response" {
+rest_api_id = "${aws_api_gateway_rest_api.resume_website.id}"
+resource_id = "${aws_api_gateway_resource.resume_website.id}"
+http_method = "${aws_api_gateway_method.resume_website_get.http_method}"
+status_code = "200"
+
+response_parameters = {
+"method.response.header.Access-Control-Allow-Origin" = true
+}
+}
+
+resource "aws_api_gateway_integration_response" "resume_website_get_integration_response" {
+rest_api_id = "${aws_api_gateway_rest_api.resume_website.id}"
+resource_id = "${aws_api_gateway_resource.resume_website.id}"
+http_method = "${aws_api_gateway_method.resume_website_get.http_method}"
+status_code = "${aws_api_gateway_method_response.resume_website_get_response.status_code}"
+
+response_parameters = {
+"method.response.header.Access-Control-Allow-Origin" = "'*'"
+}
+}
 
 # Create the Lambda function
 resource "aws_lambda_function" "resume_website" {
