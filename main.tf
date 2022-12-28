@@ -3,8 +3,9 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "s3_bucket_website_configuration" "resume_website" {
+resource "aws_s3_bucket" "resume_website" {
   bucket = "my-resume-website"
+  acl    = "public-read"
 
   website {
     index_document = "index.html"
@@ -12,15 +13,10 @@ resource "s3_bucket_website_configuration" "resume_website" {
   }
 }
 
-resource "aws_s3_bucket_acl" "resume_website" {
-  bucket = aws_s3_bucket.resume_website.id
-  acl    = "public-read"
-}
-
 
 resource "aws_cloudfront_distribution" "resume_website" {
   origin {
-    domain_name = s3_bucket_website_configuration.resume_website.website_endpoint
+    domain_name = aws_s3_bucket.resume_website.website_domain
     origin_id   = "S3Origin"
 
     s3_origin_config {
