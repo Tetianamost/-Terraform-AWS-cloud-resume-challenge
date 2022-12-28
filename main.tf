@@ -78,6 +78,8 @@ resource "aws_api_gateway_resource" "resume_website" {
 
 # Create the Lambda function
 resource "aws_lambda_function" "resume_website" {
+  s3_bucket     = "my-resume-website-lambda"
+  s3_key        = "lambda.zip"
   function_name = "my-resume-website-lambda"
   handler       = "index.handler"
   runtime       = "python3.8"
