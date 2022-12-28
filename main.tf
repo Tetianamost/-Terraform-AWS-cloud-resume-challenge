@@ -152,7 +152,7 @@ resource "aws_lambda_function" "resume_website" {
  }
  
 resource "aws_s3_bucket_policy" "lambda_access" {
-  bucket = "my-s3-bucket"
+  bucket = "my-resume-website-lambda"
 
   policy = <<EOF
 {
