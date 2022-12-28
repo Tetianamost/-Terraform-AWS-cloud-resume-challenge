@@ -13,7 +13,7 @@ resource "aws_s3_bucket" "resume_website" {
 
   website {
     index_document = "index.html"
-    error_document = "error.html"
+   
   }
 }
 
