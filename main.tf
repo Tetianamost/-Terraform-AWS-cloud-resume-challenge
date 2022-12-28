@@ -30,6 +30,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
       origin_protocol_policy = "http-only"
       origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
     }
+
   }
 
   viewer_certificate {
@@ -42,6 +43,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
 
       cookies {
         forward = "none"
+      }
       }
 
   restrictions {
