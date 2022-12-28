@@ -17,6 +17,10 @@ resource "aws_cloudfront_distribution" "resume_website" {
     domain_name = aws_s3_bucket.resume_website.website_endpoint
     origin_id   = "S3-origin"
   }
+   viewer_certificate {
+    acm_certificate_arn = "${aws_acm_certificate.resume_website.arn}"
+    ssl_support_method  = "sni-only"
+  }
 
   enabled = true
 
@@ -56,21 +60,8 @@ resource "aws_lambda_function" "resume_website" {
   handler       = "index.handler"
   runtime       = "python3.8"
   role          = "${aws_iam_role.lambda_role.arn}"
-  s3_bucket     = "${aws_s3_bucket.resume_website.id}"
-  s3_key        = "lambda.zip"
-
-  # Add the Lambda function code as a local file
-  source_code_hash = "${filebase64sha256("lambda.zip")}"
-
-  environment {
-    variables = {
-      DYNAMODB_TABLE = "my-resume-website-table"
-    }
-  }
-}
-
+ }
  
-
 
 resource "aws_iam_role" "lambda_role" {
   name = "my-resume-website-lambda-role"
@@ -143,8 +134,4 @@ resource "aws_dynamodb_table" "resume_website" {
     type = "S"
   }
 
-  key_schema {
-    attribute_name = "id"
-    key_type       = "HASH"
-  }
 }
