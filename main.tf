@@ -80,21 +80,21 @@ resource "aws_api_gateway_resource" "resume_website" {
   path_part   = "resume"
 }
 resource "aws_api_gateway_method" "resume_website_get" {
-rest_api_id = "${aws_api_gateway_rest_api.resume_website.id}"
-resource_id = "${aws_api_gateway_resource.resume_website.id}"
-http_method = "GET"
-authorization = "NONE"
+  rest_api_id   = "${aws_api_gateway_rest_api.resume_website.id}"
+  resource_id   = "${aws_api_gateway_resource.resume_website.id}"
+  http_method   = "GET"
+  authorization = "NONE"
 
-request_parameters = {
-"method.request.querystring.key" = true
+  integration {
+    type        = "AWS_PROXY"
+    integration_http_method = "POST"
+    uri                     = "${aws_lambda_function.resume_website.invoke_arn}"
+    request_templates = {
+      "application/json" = "$input.json('$')"
+    }
+  }
 }
 
-integration {
-type = "AWS_PROXY"
-integration_http_method = "POST"
-uri = "${aws_lambda_function.resume_website.invoke_arn}"
-}
-}
 resource "aws_api_gateway_method_response" "resume_website_get_response" {
 rest_api_id = "${aws_api_gateway_rest_api.resume_website.id}"
 resource_id = "${aws_api_gateway_resource.resume_website.id}"
@@ -106,16 +106,36 @@ response_parameters = {
 }
 }
 
-resource "aws_api_gateway_integration_response" "resume_website_get_integration_response" {
-rest_api_id = "${aws_api_gateway_rest_api.resume_website.id}"
-resource_id = "${aws_api_gateway_resource.resume_website.id}"
-http_method = "${aws_api_gateway_method.resume_website_get.http_method}"
-status_code = "${aws_api_gateway_method_response.resume_website_get_response.status_code}"
+resource "aws_api_gateway_method" "resume_website_post" {
+  rest_api_id   = "${aws_api_gateway_rest_api.resume_website.id}"
+  resource_id   = "${aws_api_gateway_resource.resume_website.id}"
+  http_method   = "POST"
+  authorization = "NONE"
 
-response_parameters = {
-"method.response.header.Access-Control-Allow-Origin" = "'*'"
+  integration {
+    type        = "AWS_PROXY"
+    integration_http_method = "POST"
+    uri                     = "${aws_lambda_function.resume_website.invoke_arn}"
+    request_templates = {
+      "application/json" = "$input.json('$')"
+    }
+  }
 }
+
+resource "aws_api_gateway_method_response" "resume_website_options" {
+  rest_api_id = "${aws_api_gateway_rest_api.resume_website.id}"
+  resource_id = "${aws_api_gateway_resource.resume_website.id}"
+  http_method = "OPTIONS"
+  status_code = "200"
+
+    response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Origin"  = true,
+    "method.response.header.Access-Control-Expose-Headers" = true
+  }
 }
+
 
 # Create the Lambda function
 resource "aws_lambda_function" "resume_website" {
