@@ -13,10 +13,13 @@ resource "aws_s3_bucket" "resume_website" {
   }
 }
 
+output "s3_website_endpoint" {
+  value = aws_s3_bucket.resume_website.website_endpoint
+}
 
 resource "aws_cloudfront_distribution" "resume_website" {
   origin {
-    domain_name = aws_s3_bucket.resume_website.website_domain
+    domain_name = aws_s3_bucket.resume_website.website_endpoint
     origin_id   = "S3Origin"
 
     s3_origin_config {
