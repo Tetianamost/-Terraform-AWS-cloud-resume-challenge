@@ -34,7 +34,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
       restriction_type = "none"
     }
   }
-  
+
   default_cache_behavior {
     target_origin_id = "S3Origin"
 
@@ -151,5 +151,20 @@ resource "aws_dynamodb_table" "resume_website" {
     name = "id"
     type = "S"
   }
+    attribute {
+    name = "name"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "name_index"
+    hash_key        = "name"
+    range_key       = "id"
+    write_capacity  = 5
+    read_capacity   = 5
+    projection_type = "ALL"
+  }
 
 }
+
+
