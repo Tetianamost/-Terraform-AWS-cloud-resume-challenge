@@ -253,9 +253,10 @@ resource "aws_dynamodb_table" "resume_website" {
     type = "S"
   }
     attribute {
-    name = "name"
-    type = "S"
+    name = "count"
+    type = "N"
   }
+
    hash_key = "id"
    range_key = "name"
 
