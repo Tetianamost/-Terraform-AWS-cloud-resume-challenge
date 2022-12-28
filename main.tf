@@ -19,9 +19,8 @@ output "s3_website_endpoint" {
 
 resource "aws_cloudfront_distribution" "resume_website" {
   origin {
-    domain_name = aws_s3_bucket.resume_website.website_endpoint
+    domain_name = my-resume-website-latest.resume_website.website_endpoint
     origin_id   = "S3Origin"
-
     s3_origin_config {
       origin_access_identity = "${aws_cloudfront_origin_access_identity.resume_website.cloudfront_access_identity_path}"
     }
