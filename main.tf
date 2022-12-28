@@ -145,12 +145,42 @@ resource "aws_api_gateway_method_response" "resume_website_options" {
 resource "aws_lambda_function" "resume_website" {
   s3_bucket     = "my-resume-website-lambda"
   s3_key        = "lambda.zip"
-  function_name = "my-resume-website-lambda"
+  function_name = "handler"
   handler       = "index.handler"
-  runtime       = "python3.8"
+  runtime       = "python3.9"
   role          = "${aws_iam_role.lambda_role.arn}"
  }
  
+resource "aws_s3_bucket_policy" "lambda_access" {
+  bucket = "my-s3-bucket"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowLambdaFunctionAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::my-resume-website-lambda",
+        "arn:aws:s3:::my-resume-website-lambda/*"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_lambda_permission" "allow_s3_access" {
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.resume_website.arn}"
+  principal     = "s3.amazonaws.com"
+  source_arn    = "${aws_s3_bucket.resume_website.arn}"
+}
 
 resource "aws_iam_role" "lambda_role" {
   name = "my-resume-website-lambda-role"
