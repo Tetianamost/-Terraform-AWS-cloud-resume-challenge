@@ -38,13 +38,6 @@ resource "aws_cloudfront_distribution" "resume_website" {
     ssl_support_method  = "sni-only"
   }
   enabled = true
-    forwarded_values {
-      query_string = false
-
-      cookies {
-        forward = "none"
-      }
-      }
 
   restrictions {
     geo_restriction {
