@@ -84,6 +84,18 @@ resource "aws_api_gateway_integration" "lambda_integration" {
   resource_id   = "${aws_api_gateway_resource.resume_website.id}"
   http_method   = "${aws_api_gateway_method.resume_website_get.http_method}"
   type          = "AWS_PROXY"
+  request_parameters = {
+    "integration.request.header.X-Authorization" = "'static'"
+  }
+
+  # Transforms the incoming XML request to JSON
+  request_templates = {
+    "application/xml" = <<EOF
+{
+   "body" : $input.json('$')
+}
+EOF
+  }
   uri           = "${aws_lambda_function.resume_website.invoke_arn}"
 }
 resource "aws_api_gateway_method" "resume_website_get" {
