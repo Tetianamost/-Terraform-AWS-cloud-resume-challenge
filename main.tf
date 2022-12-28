@@ -47,7 +47,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
   default_cache_behavior {
     target_origin_id = "CustomOrigin"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "POST", "HEAD", "OPTIONS"]
+    allowed_methods        = ["GET", "POST", "DELETE", "PUT", "PATCH", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "POST", "HEAD", "OPTIONS"]
     forwarded_values {
       query_string = false
@@ -87,17 +87,7 @@ resource "aws_api_gateway_integration" "lambda_integration" {
   request_parameters = {
     "integration.request.header.X-Authorization" = "'static'"
   }
-
-  # Transforms the incoming XML request to JSON
-  request_templates = {
-    "application/xml" = <<EOF
-{
-   "body" : $input.json('$')
-}
-EOF
-  }
-  
-  uri           = "${aws_lambda_function.resume_website.invoke_arn}"
+  uri      = "${aws_lambda_function.resume_website.invoke_arn}"
 }
 resource "aws_api_gateway_method" "resume_website_get" {
   rest_api_id   = "${aws_api_gateway_rest_api.resume_website.id}"
