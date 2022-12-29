@@ -55,7 +55,7 @@ resource "aws_lambda_permission" "allow_s3_access" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.resume_website.arn
   principal     = "s3.amazonaws.com"
-  source_arn    = aws_s3_bucket.resume_website.arn
+  source_arn    = var.resume_website_bucket_arn
 }
 
 resource "aws_lambda_permission" "apigw_invoke_lambda" {
