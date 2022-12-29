@@ -135,6 +135,7 @@ resource "aws_api_gateway_stage" "resume_website" {
   rest_api_id   = aws_api_gateway_rest_api.resume_website.id
   stage_name    = "prod"
   deployment_id = aws_api_gateway_deployment.resume_website_get.id
+  create_before_destroy = true
 }
 
 output "api_endpoint_url" {
