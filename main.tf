@@ -269,12 +269,8 @@ resource "aws_dynamodb_table" "resume_website" {
     type = "N"
   }
 
- key_schema = [
-    {
-      attribute_name = "id"
-      key_type       = "HASH"
-    }
-  ]
+  hash_key  = "id"
+  range_key = "count"
 
   global_secondary_index {
     name            = "count_index"
