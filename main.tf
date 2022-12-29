@@ -83,6 +83,12 @@ resource "aws_api_gateway_method" "resume_website_get" {
   resource_id   = aws_api_gateway_resource.resume_website.id
   http_method   = "GET"
   authorization = "NONE"
+    integration {
+    type                    = "AWS_PROXY"
+    integration_http_method = "POST"
+    uri                     = aws_lambda_function.resume_website.invoke_arn
+    passthrough_behavior    = "WHEN_NO_MATCH"
+  }
 }
 
 resource "aws_api_gateway_integration" "lambda_integration" {
