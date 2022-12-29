@@ -86,14 +86,48 @@ resource "aws_api_gateway_method" "resume_website_get" {
 }
 
 resource "aws_api_gateway_integration" "lambda_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.resume_website.id
-  resource_id             = aws_api_gateway_resource.resume_website.id
-  http_method             = aws_api_gateway_method.resume_website_get.http_method
-  type                    = "AWS_PROXY"
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  resource_id = aws_api_gateway_resource.resume_website.id
+  http_method = aws_api_gateway_method.resume_website_get.http_method
+  type        = "AWS_PROXY"
 
   integration_http_method = "POST"
   uri                     = aws_lambda_function.resume_website.invoke_arn
 
+}
+# Set up a method response for the method
+resource "aws_api_gateway_method_response" "resume_website_get" {
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  resource_id = aws_api_gateway_resource.resume_website.id
+  http_method = aws_api_gateway_method.resume_website_get.http_method
+  status_code = "200"
+}
+
+# Set up an integration response for the integration
+resource "aws_api_gateway_integration_response" "lambda_integration_response" {
+  rest_api_id             = aws_api_gateway_rest_api.resume_website.id
+  resource_id             = aws_api_gateway_resource.resume_website.id
+  http_method             = aws_api_gateway_method.resume_website_get.http_method
+  status_code             = "200"
+  integration_response_id = aws_api_gateway_integration.lambda_integration.id
+}
+
+#Set up a deployment for the API Gateway
+resource "aws_api_gateway_deployment" "resume_website" {
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  stage_name  = "DEV2"
+  depends_on = [
+    aws_api_gateway_method.resume_website_get,
+    aws_api_gateway_integration.lambda_integration,
+    aws_api_gateway_method_response.resume_website_get,
+    aws_api_gateway_integration_response.lambda_integration_response
+  ]
+}
+
+#Create an output with the API Gateway endpoint URL
+
+output "api_endpoint_url" {
+  value = aws_api_gateway_deployment.resume_website.invoke_url
 }
 resource "aws_api_gateway_method" "resume_website_options" {
   rest_api_id   = aws_api_gateway_rest_api.resume_website.id
@@ -102,11 +136,11 @@ resource "aws_api_gateway_method" "resume_website_options" {
   authorization = "NONE"
 }
 resource "aws_api_gateway_integration" "lambda_integration_options" {
-  rest_api_id             = aws_api_gateway_rest_api.resume_website.id
-  resource_id             = aws_api_gateway_resource.resume_website.id
-  http_method             = aws_api_gateway_method.resume_website_options.http_method
-  type                    = "AWS_PROXY"
-  
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  resource_id = aws_api_gateway_resource.resume_website.id
+  http_method = aws_api_gateway_method.resume_website_options.http_method
+  type        = "AWS_PROXY"
+
   integration_http_method = "POST"
   uri                     = aws_lambda_function.resume_website.invoke_arn
 
@@ -116,27 +150,6 @@ resource "aws_api_gateway_method_response" "resume_website_options" {
   resource_id = aws_api_gateway_resource.resume_website.id
   http_method = aws_api_gateway_method.resume_website_options.http_method
   status_code = "200"
-}
-resource "aws_api_gateway_deployment" "resume_website_get" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  stage_name  = "prod"
-  depends_on = [
-    aws_api_gateway_method.resume_website_get,
-    aws_api_gateway_integration.lambda_integration
-  ]
-}
-
-resource "aws_api_gateway_stage" "resume_website" {
-  rest_api_id   = aws_api_gateway_rest_api.resume_website.id
-  stage_name    = "dev"
-  deployment_id = aws_api_gateway_deployment.resume_website_get.id
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-output "api_endpoint_url" {
-  value = aws_api_gateway_stage.resume_website.invoke_url
 }
 
 
