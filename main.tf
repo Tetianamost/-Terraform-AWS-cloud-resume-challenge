@@ -19,11 +19,6 @@ module "lambda" {
 
 }
 
-
-module "route53" {
-  source = "./modules/route53"
-}
-
 module "dynamodb" {
   source = "./modules/dynamodb"
 }
