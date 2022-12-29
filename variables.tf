@@ -5,6 +5,7 @@ variable "api_arn" {
   type = string
 }
 variable "dynamodb_table" {
+     default = "my-resume-website-table"
   type = object({
     arn = string
   })
