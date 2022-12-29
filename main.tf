@@ -276,5 +276,13 @@ resource "aws_dynamodb_table" "resume_website" {
 
   hash_key  = "pk"
   range_key = "sk"
-}
 
+  global_secondary_index {
+    name            = "visit_count_index"
+    hash_key        = "visit_count"
+    range_key       = "sk"
+    projection_type = "ALL"
+    write_capacity  = 5
+    read_capacity   = 5
+  }
+}
