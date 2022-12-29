@@ -141,8 +141,9 @@ resource "aws_api_gateway_method_response" "resume_website_options" {
     "method.response.header.Access-Control-Allow-Headers"  = true,
     "method.response.header.Access-Control-Allow-Methods"  = true,
     "method.response.header.Access-Control-Allow-Origin"   = true,
-    "method.response.header.Access-Control
-
+    "method.response.header.Access-Control-Expose-Headers" = true
+  }
+}
 
 
 # Create the Lambda function
@@ -279,6 +280,5 @@ resource "aws_dynamodb_table" "resume_website" {
     read_capacity   = 5
     projection_type = "ALL"
   }
-
 }
 
