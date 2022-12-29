@@ -15,7 +15,7 @@ output "s3_website_endpoint" {
 
 resource "aws_cloudfront_distribution" "resume_website" {
   origin {
-    domain_name = "www.example.com"
+    domain_name = "www.bythebeach.store"
     origin_id   = "CustomOrigin"
 
     custom_origin_config {
