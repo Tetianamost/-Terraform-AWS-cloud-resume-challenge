@@ -133,7 +133,7 @@ resource "aws_api_gateway_deployment" "resume_website_get" {
 
 resource "aws_api_gateway_stage" "resume_website" {
   rest_api_id   = aws_api_gateway_rest_api.resume_website.id
-  stage_name    = "prod"
+  stage_name    = "dev"
   deployment_id = aws_api_gateway_deployment.resume_website_get.id
   lifecycle {
     create_before_destroy = true
