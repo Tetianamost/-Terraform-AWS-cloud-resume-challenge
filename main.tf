@@ -199,6 +199,13 @@ resource "aws_iam_role" "lambda_role" {
 }
 EOF
 }
+resource "aws_lambda_permission" "apigw_invoke_lambda" {
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.resume_website.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.resume_website.execution_arn}/*"
+}
+
 resource "aws_iam_policy" "lambda_dynamodb_policy" {
   name   = "my-resume-website-lambda-dynamodb-policy"
   policy = <<EOF
