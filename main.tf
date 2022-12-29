@@ -146,6 +146,9 @@ resource "aws_api_gateway_method_response" "resume_website_options" {
     "method.response.header.Access-Control-Expose-Headers" = true
   }
 }
+output "api_endpoint_url" {
+  value = aws_api_gateway_rest_api.resume_website.invoke_url
+}
 
 
 # Create the Lambda function
