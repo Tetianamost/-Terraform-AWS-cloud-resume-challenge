@@ -78,30 +78,6 @@ resource "aws_api_gateway_resource" "resume_website" {
   parent_id   = aws_api_gateway_rest_api.resume_website.root_resource_id
   path_part   = "resume"
 }
-resource "aws_api_gateway_integration" "lambda_integration_get" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  resource_id = aws_api_gateway_resource.resume_website.id
-  http_method = ${aws_api_gateway_method.resume_website.http_method}"
-  type        = "AWS_PROXY"
-  request_parameters = {
-    "integration.request.header.X-Authorization" = "'static'"
-  }
-  uri = aws_lambda_function.resume_website.invoke_arn
-  integration_http_method = "GET"
-}
-
-resource "aws_api_gateway_integration" "lambda_integration_post" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  resource_id = aws_api_gateway_resource.resume_website.id
-  http_method = ${aws_api_gateway_method.resume_website.http_method}"
-  type        = "AWS_PROXY"
-  request_parameters = {
-    "integration.request.header.X-Authorization" = "'static'"
-  }
-  uri = aws_lambda_function.resume_website.invoke_arn
-  integration_http_method = "POST"
-}
-
 resource "aws_api_gateway_method" "resume_website_get" {
   rest_api_id   = aws_api_gateway_rest_api.resume_website.id
   resource_id   = aws_api_gateway_resource.resume_website.id
@@ -113,7 +89,31 @@ resource "aws_api_gateway_method" "resume_website_post" {
   resource_id   = aws_api_gateway_resource.resume_website.id
   http_method   = "POST"
   authorization = "NONE"
+  }
+resource "aws_api_gateway_integration" "lambda_integration_get" {
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  resource_id = aws_api_gateway_resource.resume_website.id
+  http_method = ${aws_api_gateway_method.resume_website.get.http_method}"
+  type        = "AWS_PROXY"
+  request_parameters = {
+    "integration.request.header.X-Authorization" = "'static'"
+  }
+  uri = aws_lambda_function.resume_website.invoke_arn
+  integration_http_method = "GET"
 }
+
+resource "aws_api_gateway_integration" "lambda_integration_post" {
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  resource_id = aws_api_gateway_resource.resume_website.id
+  http_method = ${aws_api_gateway_method.resume_website.post.http_method}"
+  type        = "AWS_PROXY"
+  request_parameters = {
+    "integration.request.header.X-Authorization" = "'static'"
+  }
+  uri = aws_lambda_function.resume_website.invoke_arn
+  integration_http_method = "POST"
+}
+
 
 resource "aws_api_gateway_method_response" "resume_website_get_response" {
   rest_api_id = aws_api_gateway_rest_api.resume_website.id
