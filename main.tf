@@ -96,7 +96,7 @@ resource "aws_api_gateway_integration" "lambda_integration_get" {
   
     type                    = "AWS_PROXY"
     integration_http_method = "GET"
-    uri                     = aws_lambda_function.resume_website_get.invoke_arn
+    uri                     = aws_lambda_function.resume_website.invoke_arn
   
 }
 
