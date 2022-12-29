@@ -8,12 +8,13 @@ module "content-delivery" {
 
 module "apigateway" {
   source = "./modules/apigateway"
+  api_gateway_rest_api = var.api_gateway_rest_api
 }
 
 module "lambda" {
   source         = "./modules/lambda"
-  api_arn        = module.apigateway.api_gateway_rest_api.execution_arn
-  dynamodb_table = module.dynamodb.dynamodb_table
+  api_arn        = var.api_gateway_rest_api.execution_arn
+  dynamodb_table = var.dynamodb_table
 
 }
 
