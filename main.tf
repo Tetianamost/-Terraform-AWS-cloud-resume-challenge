@@ -13,8 +13,8 @@ module "apigateway" {
 
 module "lambda" {
   source         = "./modules/lambda"
- 
- 
+  api_arn        = var.api_gateway_rest_api.execution_arn
+  dynamodb_table = var.dynamodb_table.arn
 
 }
 
