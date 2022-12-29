@@ -93,15 +93,11 @@ resource "aws_api_gateway_integration" "lambda_integration_get" {
     "method.request.querystring.key" = true
   }
 
-  request_models = {
-    "application/json" = aws_api_gateway_model.resume_website.name
-  }
-
-  integration {
+  
     type                    = "AWS_PROXY"
     integration_http_method = "GET"
     uri                     = aws_lambda_function.resume_website_get.invoke_arn
-  }
+  
 }
 
 
