@@ -138,6 +138,7 @@ resource "aws_api_gateway_stage" "resume_website" {
   lifecycle {
     create_before_destroy = true
   }
+}
 
 output "api_endpoint_url" {
   value = aws_api_gateway_stage.resume_website.invoke_url
