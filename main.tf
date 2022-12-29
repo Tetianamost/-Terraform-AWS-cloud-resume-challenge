@@ -1,31 +1,6 @@
 provider "aws" {
   region = "us-east-1"
 }
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-module "content-delivery" {
-  source = "./modules/content-delivery"
-}
-
-module "apigateway" {
-  source = "./modules/apigateway"
-  
-}
-
-module "lambda" {
-  source         = "./modules/lambda"
-  api_arn        = var.api_gateway_rest_api.execution_arn
-  dynamodb_table = var.dynamodb_table.arn
-
-}
-
-module "dynamodb" {
-  source = "./modules/dynamodb"
-}
-=======
 resource "aws_s3_bucket" "resume_website" {
   bucket = "my-resume-website-latest"
   acl    = "public-read"
@@ -1108,5 +1083,5 @@ resource "aws_dynamodb_table" "resume_website" {
 
 }
 
->>>>>>> parent of 480ddce (separated resources using modules)
+
 
