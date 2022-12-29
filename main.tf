@@ -213,12 +213,16 @@ resource "aws_iam_role" "lambda_role" {
 }
 EOF
 }
-resource "aws_lambda_permission" "resume_website_get" {
+
+# Grant the Lambda function permission to execute
+resource "aws_lambda_permission" "allow_execute" {
+  statement_id  = "AllowExecution"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.resume_website.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.resume_website.execution_arn}/*"
+  source_arn    = aws_api_gateway_rest_api.resume_website.execution_arn
 }
+
 
 resource "aws_iam_policy" "lambda_dynamodb_policy" {
   name   = "my-resume-website-lambda-dynamodb-policy"
