@@ -7,13 +7,13 @@ module "s3-cloudfront-cert" {
 }
 
 module "apigateway" {
-  source = "./apigateway"
+  source = "./modules/apigateway"
 
   api_gateway_rest_api = aws_api_gateway_rest_api.resume_website
 }
 
 module "lambda" {
-  source  = "./lambda"
+  source  = "./modules/lambda"
   api_arn = module.apigateway.api_gateway_rest_api.execution_arn
   
 }
