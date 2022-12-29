@@ -260,24 +260,17 @@ resource "aws_dynamodb_table" "resume_website" {
   write_capacity = 5
   read_capacity  = 5
 
+  attribute {
+    name = "id"
+    type = "S"
+  }
+  attribute {
+    name = "count"
+    type = "N"
+  }
 
-  key_schema = [
-    {
-      attribute_name = "id"
-      key_type       = "HASH"
-    }
-  ]
-
-  attribute_definitions = [
-    {
-      attribute_name = "id"
-      attribute_type = "S"
-    },
-    {
-      attribute_name = "count"
-      attribute_type = "N"
-    }
-  ]
+  hash_key  = "id"
+  range_key = "count"
 
   global_secondary_index {
     name            = "count_index"
