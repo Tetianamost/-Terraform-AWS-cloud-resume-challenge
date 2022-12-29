@@ -1,3 +1,6 @@
-output "aws_api_gateway_rest_api" {
-  value = aws_api_gateway_rest_api.resume_website.execution_arn
+output "api_arn" {
+  value = var.api_arn
+}
+output "api_gateway_rest_api" {
+  value = var.api_gateway_rest_api
 }
