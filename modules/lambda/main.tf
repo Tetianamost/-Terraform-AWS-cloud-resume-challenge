@@ -80,7 +80,7 @@ resource "aws_iam_policy" "lambda_dynamodb_policy" {
         "dynamodb:UpdateItem",
         "dynamodb:DeleteItem"
       ],
- "Resource": "${aws_dynamodb_table.resume_website.arn}",
+ "Resource": "${var.dynamodb_table.arn}",
 "Effect": "Allow"
 }
 ]

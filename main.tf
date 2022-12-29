@@ -13,8 +13,9 @@ module "apigateway" {
 }
 
 module "lambda" {
-  source  = "./modules/lambda"
-  api_arn = module.apigateway.api_gateway_rest_api.execution_arn
+  source         = "./modules/lambda"
+  api_arn        = module.apigateway.api_gateway_rest_api.execution_arn
+  dynamodb_table = module.dynamodb.dynamodb_table
 
 }
 
