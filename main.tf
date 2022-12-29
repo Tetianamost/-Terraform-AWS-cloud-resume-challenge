@@ -85,15 +85,14 @@ resource "aws_api_gateway_method" "resume_website_get" {
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_integration" "lambda_integration_get" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  resource_id = aws_api_gateway_resource.resume_website.id
-  http_method = aws_api_gateway_method.resume_website_get.http_method
+resource "aws_api_gateway_integration" "lambda_integrationt" {
+  rest_api_id             = aws_api_gateway_rest_api.resume_website.id
+  resource_id             = aws_api_gateway_resource.resume_website.id
+  http_method             = aws_api_gateway_method.resume_website_get.http_method
+  type                    = "AWS_PROXY"
+  integration_http_method = "GET"
+  uri                     = aws_lambda_function.resume_website.invoke_arn
 
-    type                    = "AWS_PROXY"
-    integration_http_method = "GET"
-    uri                     = aws_lambda_function.resume_website.invoke_arn
-  
 }
 
 
@@ -133,7 +132,7 @@ resource "aws_api_gateway_deployment" "resume_website_get" {
   stage_name  = "prod"
   depends_on = [
     aws_api_gateway_method.resume_website_get,
-    aws_api_gateway_integration.lambda_integration_get
+    aws_api_gateway_integration.lambda_integration
   ]
 }
 
