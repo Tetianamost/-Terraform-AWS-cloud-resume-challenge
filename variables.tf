@@ -1,6 +1,8 @@
 variable "resume_website_bucket_arn" {
-  type = string
+  default = aws_s3_bucket.resume_website.arn
+  type = "string"
 }
+
 variable "api_arn" {
   type = string
 }

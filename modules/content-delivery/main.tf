@@ -6,10 +6,6 @@ resource "aws_s3_bucket" "resume_website" {
   }
 }
 
-output "s3_website_endpoint" {
-  value = aws_s3_bucket.resume_website.website_endpoint
-}
-
 resource "aws_cloudfront_distribution" "resume_website" {
   origin {
     domain_name = "www.example.com"
