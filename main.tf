@@ -8,8 +8,6 @@ module "content-delivery" {
 
 module "apigateway" {
   source = "./modules/apigateway"
-
-  api_gateway_rest_api = var.api_gateway_rest_api
 }
 
 module "lambda" {
