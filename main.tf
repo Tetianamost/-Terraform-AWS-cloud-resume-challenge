@@ -146,14 +146,14 @@ resource "aws_api_gateway_method_response" "resume_website_options" {
     "method.response.header.Access-Control-Expose-Headers" = true
   }
 }
-resource "aws_api_gateway_deployment" "resume_website" {
+resource "aws_api_gateway_deployment" "resume_website_get" {
   rest_api_id = aws_api_gateway_rest_api.resume_website.id
   stage_name  = "prod"
 }
 
 resource "aws_api_gateway_stage" "resume_website" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  stage_name  = "prod"
+  rest_api_id   = aws_api_gateway_rest_api.resume_website.id
+  stage_name    = "prod"
   deployment_id = aws_api_gateway_deployment.resume_website.id
 }
 
