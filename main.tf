@@ -262,24 +262,19 @@ resource "aws_dynamodb_table" "resume_website" {
   read_capacity  = 5
 
   attribute {
-    name = "id"
+    name = "pk"
     type = "S"
   }
   attribute {
-    name = "count"
+    name = "sk"
+    type = "S"
+  }
+  attribute {
+    name = "visit_count"
     type = "N"
   }
 
-  hash_key  = "id"
-  range_key = "count"
-
-  global_secondary_index {
-    name            = "count_index"
-    hash_key        = "count"
-    range_key       = "id"
-    write_capacity  = 5
-    read_capacity   = 5
-    projection_type = "ALL"
-  }
+  hash_key  = "pk"
+  range_key = "sk"
 }
 
