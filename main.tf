@@ -116,13 +116,6 @@ resource "aws_api_gateway_method_response" "resume_website_options" {
   resource_id = aws_api_gateway_resource.resume_website.id
   http_method = aws_api_gateway_method.resume_website_options.http_method
   status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers"  = true,
-    "method.response.header.Access-Control-Allow-Methods"  = true,
-    "method.response.header.Access-Control-Allow-Origin"   = true,
-    "method.response.header.Access-Control-Expose-Headers" = true
-  }
 }
 resource "aws_api_gateway_deployment" "resume_website_get" {
   rest_api_id = aws_api_gateway_rest_api.resume_website.id
