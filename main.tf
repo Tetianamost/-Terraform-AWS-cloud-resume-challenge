@@ -46,8 +46,8 @@ resource "aws_cloudfront_distribution" "resume_website" {
   default_cache_behavior {
     target_origin_id       = "CustomOrigin"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    allowed_methods        = ["GET", "HEAD", "OPTIONS", "POST"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS", "POST"]
     forwarded_values {
       query_string = false
       cookies {
