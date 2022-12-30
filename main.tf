@@ -16,7 +16,7 @@ output "s3_website_endpoint" {
 resource "aws_cloudfront_distribution" "resume_website" {
   wait_for_deployment = true
   origin {
-    domain_name = "http://bythebeach.store.s3-website-us-east-1.amazonaws.com"
+    domain_name = aws_s3_bucket.resume_website.website_endpoint
     origin_id   = "CustomOrigin"
 
     custom_origin_config {
@@ -263,7 +263,7 @@ resource "aws_route53_record" "resume_website" {
   alias {
     name                   = aws_cloudfront_distribution.resume_website.domain_name
     zone_id                = aws_cloudfront_distribution.resume_website.hosted_zone_id
-    evaluate_target_health = true
+    evaluate_target_health = false
   }
 }
 
