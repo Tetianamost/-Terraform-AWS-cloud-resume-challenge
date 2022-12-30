@@ -14,8 +14,9 @@ output "s3_website_endpoint" {
 }
 
 resource "aws_cloudfront_distribution" "resume_website" {
+  wait_for_deployment = true
   origin {
-    domain_name = "bythebeach.store"
+    domain_name = "http://bythebeach.store.s3-website-us-east-1.amazonaws.com"
     origin_id   = "CustomOrigin"
 
     custom_origin_config {
@@ -23,7 +24,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
       http_port                = 80
       https_port               = 443
       origin_keepalive_timeout = 5
-      origin_protocol_policy   = "https-only"
+      origin_protocol_policy   = "http-only"
     }
   }
 
@@ -33,7 +34,9 @@ resource "aws_cloudfront_distribution" "resume_website" {
     ssl_support_method  = "sni-only"
   }
 
-  enabled = true
+  enabled          = true
+  is_ipv6_enabled  = true
+  retain_on_delete = true
 
   restrictions {
     geo_restriction {
@@ -51,6 +54,11 @@ resource "aws_cloudfront_distribution" "resume_website" {
     min_ttl                = 86400
     forwarded_values {
       query_string = false
+      headers = [
+        "Access-Control-Request-Headers",
+        "Access-Control-Request-Method",
+        "Origin"
+      ]
       cookies {
         forward = "none"
       }
