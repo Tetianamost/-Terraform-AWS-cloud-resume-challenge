@@ -299,7 +299,6 @@ resource "aws_api_gateway_deployment" "resume_website" {
     aws_api_gateway_method_response.resume_website_get,
     aws_api_gateway_integration_response.lambda_integration_response
   ]
-  role_arn = aws_iam_role.api_gateway_service_role.arn
 }
 
 #Create an output with the API Gateway endpoint URL
