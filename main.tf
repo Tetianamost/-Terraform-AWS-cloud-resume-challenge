@@ -213,7 +213,7 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attachment" {
 }
 
 resource "aws_api_gateway_rest_api" "resume_website" {
-  name = "my-resume-website-api"
+  name     = "my-resume-website-api"
   role_arn = aws_iam_role.api_gateway_service_role.arn
 }
 
