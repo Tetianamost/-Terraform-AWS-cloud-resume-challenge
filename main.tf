@@ -176,14 +176,6 @@ resource "aws_iam_role" "lambda_role" {
 EOF
 }
 
-# Grant the Lambda function permission to execute
-resource "aws_lambda_permission" "allow_execute" {
-  statement_id  = "AllowExecution"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.resume_website.arn
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.resume_website.execution_arn}/*"
-}
 
 
 resource "aws_iam_policy" "lambda_dynamodb_policy" {
@@ -213,14 +205,9 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attachment" {
 }
 
 resource "aws_api_gateway_rest_api" "existing_api" {
-  id = "65gocpoiak"
+  name = "my-resume-website-api"
+  id   = "65gocpoiak"
 }
-output "api_endpoint_url" {
-  value = aws_api_gateway_deployment.resume_website.invoke_url
-}
-
-
-
 
 resource "aws_route53_zone" "resume_website" {
   name = "bythebeach.store"
