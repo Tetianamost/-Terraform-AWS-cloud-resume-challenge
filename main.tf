@@ -86,9 +86,6 @@ resource "aws_api_gateway_method" "resume_website_get" {
   authorization    = "NONE"
   api_key_required = false
 
-  request_parameters = {
-    "method.request.path.proxy" = true
-  }
 
 }
 
