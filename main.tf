@@ -204,10 +204,45 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attachment" {
   policy_arn = aws_iam_policy.lambda_dynamodb_policy.arn
 }
 
-resource "aws_api_gateway_rest_api" "existing_api" {
-  name = "my-resume-website-api"
-  id   = "65gocpoiak"
+resource "aws_api_gateway_rest_api" "resume_website" {
+  name        = "my-resume-website-api"
+  description = "API for my resume website"
+
+  body = <<EOF
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2022-12-30T20:56:24Z",
+    "title": "my-resume-website-api"
+  },
+  "host": "65gocpoiak.execute-api.us-east-1.amazonaws.com",
+  "basePath": "/dev1",
+  "schemes": ["https"],
+  "paths": {
+    "/": {
+      "x-amazon-apigateway-any-method": {
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Empty": {
+      "type": "object",
+      "title": "Empty Schema"
+    }
+  }
 }
+EOF
+}
+
 
 resource "aws_route53_zone" "resume_website" {
   name = "bythebeach.store"
