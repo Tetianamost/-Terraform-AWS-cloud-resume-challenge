@@ -222,7 +222,7 @@ resource "aws_api_gateway_rest_api" "resume_website" {
     }
     paths = {
       resume = {
-        get = {
+        any = {
           x-amazon-apigateway-integration = {
             httpMethod           = "ANY"
             payloadFormatVersion = "1.0"
