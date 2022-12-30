@@ -69,102 +69,6 @@ resource "aws_acm_certificate" "resume_website" {
     create_before_destroy = true
   }
 }
-
-resource "aws_api_gateway_rest_api" "resume_website" {
-  name = "my-resume-website-api"
-}
-
-resource "aws_api_gateway_resource" "resume_website" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  parent_id   = aws_api_gateway_rest_api.resume_website.root_resource_id
-  path_part   = "resume"
-}
-resource "aws_api_gateway_method" "resume_website_get" {
-  rest_api_id      = aws_api_gateway_rest_api.resume_website.id
-  resource_id      = aws_api_gateway_resource.resume_website.id
-  http_method      = "ANY"
-  authorization    = "NONE"
-  api_key_required = false
-
-
-}
-
-resource "aws_api_gateway_integration" "lambda_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.resume_website.id
-  resource_id             = aws_api_gateway_resource.resume_website.id
-  http_method             = aws_api_gateway_method.resume_website_get.http_method
-  type                    = "AWS_PROXY"
-  integration_http_method = "POST"
-  uri                     = aws_lambda_function.resume_website.invoke_arn
-  passthrough_behavior    = "WHEN_NO_MATCH"
-}
-# Set up a method response for the method
-resource "aws_api_gateway_method_response" "resume_website_get" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  resource_id = aws_api_gateway_resource.resume_website.id
-  http_method = aws_api_gateway_method.resume_website_get.http_method
-  status_code = "200"
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-  }
-}
-
-
-# Set up an integration response for the integration
-resource "aws_api_gateway_integration_response" "lambda_integration_response" {
-  rest_api_id             = aws_api_gateway_rest_api.resume_website.id
-  resource_id             = aws_api_gateway_resource.resume_website.id
-  http_method             = aws_api_gateway_method.resume_website_get.http_method
-  status_code             = aws_api_gateway_method_response.resume_website_get.status_code
-  }
-resource "aws_api_gateway_method" "resume_website_options" {
-  rest_api_id   = aws_api_gateway_rest_api.resume_website.id
-  resource_id   = aws_api_gateway_resource.resume_website.id
-  http_method   = "OPTIONS"
-  authorization = "NONE"
-}
-resource "aws_api_gateway_integration" "lambda_integration_options" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  resource_id = aws_api_gateway_resource.resume_website.id
-  http_method = aws_api_gateway_method.resume_website_options.http_method
-  type        = "AWS_PROXY"
-
-  integration_http_method = "POST"
-  uri                     = aws_lambda_function.resume_website.invoke_arn
-
-}
-resource "aws_api_gateway_method_response" "resume_website_options" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  resource_id = aws_api_gateway_resource.resume_website.id
-  http_method = aws_api_gateway_method.resume_website_options.http_method
-  status_code = "200"
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = true,
-    "method.response.header.Access-Control-Allow-Methods" = true,
-    "method.response.header.Access-Control-Allow-Origin"  = true
-  }
-}
-
-
-
-#Set up a deployment for the API Gateway
-resource "aws_api_gateway_deployment" "resume_website" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  stage_name  = "dev"
-  depends_on = [
-    aws_api_gateway_method.resume_website_get,
-    aws_api_gateway_integration.lambda_integration,
-    aws_api_gateway_method_response.resume_website_get,
-    aws_api_gateway_integration_response.lambda_integration_response
-  ]
-}
-
-#Create an output with the API Gateway endpoint URL
-
-output "api_endpoint_url" {
-  value = aws_api_gateway_deployment.resume_website.invoke_url
-}
-
 # Create the Lambda function
 resource "aws_lambda_function" "resume_website" {
   s3_bucket     = "my-resume-website-lambda"
@@ -231,7 +135,7 @@ resource "aws_lambda_permission" "allow_execute" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.resume_website.arn
   principal     = "apigateway.amazonaws.com"
-  source_arn    = aws_api_gateway_rest_api.resume_website.execution_arn
+  source_arn    = aws_api_gateway_rest_api.resume_website.arn
 }
 
 
@@ -260,6 +164,103 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attachment" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.lambda_dynamodb_policy.arn
 }
+
+resource "aws_api_gateway_rest_api" "resume_website" {
+  name = "my-resume-website-api"
+}
+
+resource "aws_api_gateway_resource" "resume_website" {
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  parent_id   = aws_api_gateway_rest_api.resume_website.root_resource_id
+  path_part   = "resume"
+}
+resource "aws_api_gateway_method" "resume_website_get" {
+  rest_api_id      = aws_api_gateway_rest_api.resume_website.id
+  resource_id      = aws_api_gateway_resource.resume_website.id
+  http_method      = "ANY"
+  authorization    = "NONE"
+  api_key_required = false
+
+
+}
+
+resource "aws_api_gateway_integration" "lambda_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.resume_website.id
+  resource_id             = aws_api_gateway_resource.resume_website.id
+  http_method             = aws_api_gateway_method.resume_website_get.http_method
+  type                    = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri                     = aws_lambda_function.resume_website.invoke_arn
+  passthrough_behavior    = "WHEN_NO_MATCH"
+}
+# Set up a method response for the method
+resource "aws_api_gateway_method_response" "resume_website_get" {
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  resource_id = aws_api_gateway_resource.resume_website.id
+  http_method = aws_api_gateway_method.resume_website_get.http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
+
+# Set up an integration response for the integration
+resource "aws_api_gateway_integration_response" "lambda_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  resource_id = aws_api_gateway_resource.resume_website.id
+  http_method = aws_api_gateway_method.resume_website_get.http_method
+  status_code = aws_api_gateway_method_response.resume_website_get.status_code
+}
+resource "aws_api_gateway_method" "resume_website_options" {
+  rest_api_id   = aws_api_gateway_rest_api.resume_website.id
+  resource_id   = aws_api_gateway_resource.resume_website.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+resource "aws_api_gateway_integration" "lambda_integration_options" {
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  resource_id = aws_api_gateway_resource.resume_website.id
+  http_method = aws_api_gateway_method.resume_website_options.http_method
+  type        = "AWS_PROXY"
+
+  integration_http_method = "POST"
+  uri                     = aws_lambda_function.resume_website.invoke_arn
+
+}
+resource "aws_api_gateway_method_response" "resume_website_options" {
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  resource_id = aws_api_gateway_resource.resume_website.id
+  http_method = aws_api_gateway_method.resume_website_options.http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+
+
+#Set up a deployment for the API Gateway
+resource "aws_api_gateway_deployment" "resume_website" {
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  stage_name  = "dev"
+  depends_on = [
+    aws_api_gateway_method.resume_website_get,
+    aws_api_gateway_integration.lambda_integration,
+    aws_api_gateway_method_response.resume_website_get,
+    aws_api_gateway_integration_response.lambda_integration_response
+  ]
+}
+
+#Create an output with the API Gateway endpoint URL
+
+output "api_endpoint_url" {
+  value = aws_api_gateway_deployment.resume_website.invoke_url
+}
+
+
 
 
 resource "aws_route53_zone" "resume_website" {
