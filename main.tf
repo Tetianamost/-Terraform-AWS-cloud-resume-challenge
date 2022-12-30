@@ -20,6 +20,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
 
     custom_origin_config {
       origin_ssl_protocols     = ["TLSv1", "TLSv1.1", "TLSv1.2"]
+      http_port                = 80
       https_port               = 443
       origin_keepalive_timeout = 5
       origin_protocol_policy   = "https-only"
@@ -84,7 +85,12 @@ resource "aws_api_gateway_method" "resume_website_get" {
   http_method   = "GET"
   authorization = "NONE"
 }
-
+resource "aws_api_gateway_method_settings" "my_method_settings" {
+  rest_api_id      = aws_api_gateway_rest_api.resume_website.id
+  resource_id      = aws_api_gateway_resource.resume_website.id
+  method_path      = "${aws_api_gateway_resource.my_resource.path_part}/${aws_api_gateway_method.my_method.http_method}"
+  api_key_required = false
+}
 resource "aws_api_gateway_integration" "lambda_integration" {
   rest_api_id             = aws_api_gateway_rest_api.resume_website.id
   resource_id             = aws_api_gateway_resource.resume_website.id
