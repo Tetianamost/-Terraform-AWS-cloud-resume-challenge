@@ -2,7 +2,7 @@ provider "aws" {
   region = "us-east-1"
 }
 resource "aws_s3_bucket" "resume_website" {
-  bucket = "my-resume-website-latest"
+  bucket = "bythebeach.store"
   acl    = "public-read"
   website {
     index_document = "index.html"
@@ -15,7 +15,7 @@ output "s3_website_endpoint" {
 
 resource "aws_cloudfront_distribution" "resume_website" {
   origin {
-    domain_name = "www.bythebeach.store"
+    domain_name = "bythebeach.store"
     origin_id   = "CustomOrigin"
 
     custom_origin_config {
@@ -86,11 +86,10 @@ resource "aws_api_gateway_method" "resume_website_get" {
 }
 
 resource "aws_api_gateway_integration" "lambda_integration" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  resource_id = aws_api_gateway_resource.resume_website.id
-  http_method = aws_api_gateway_method.resume_website_get.http_method
-  type        = "AWS_PROXY"
-
+  rest_api_id             = aws_api_gateway_rest_api.resume_website.id
+  resource_id             = aws_api_gateway_resource.resume_website.id
+  http_method             = aws_api_gateway_method.resume_website_get.http_method
+  type                    = "AWS_PROXY"
   integration_http_method = "POST"
   uri                     = aws_lambda_function.resume_website.invoke_arn
 
