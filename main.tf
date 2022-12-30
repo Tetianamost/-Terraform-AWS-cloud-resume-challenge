@@ -48,6 +48,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    min_ttl                = 86400
     forwarded_values {
       query_string = false
       cookies {
