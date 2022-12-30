@@ -216,7 +216,6 @@ resource "aws_api_gateway_rest_api" "resume_website" {
   name = "my-resume-website-api"
   role_arn = aws_iam_role.api_gateway_service_role.arn
 }
-}
 
 resource "aws_api_gateway_resource" "resume_website" {
   rest_api_id = aws_api_gateway_rest_api.resume_website.id
