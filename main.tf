@@ -215,25 +215,6 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attachment" {
 resource "aws_api_gateway_rest_api" "resume_website" {
   name = "my-resume-website-api"
 }
-resource "aws_iam_role" "api_gateway_service_role" {
-  name = "my-api-gateway-service-role"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "apigateway.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
-}
 
 resource "aws_api_gateway_resource" "resume_website" {
   rest_api_id = aws_api_gateway_rest_api.resume_website.id
