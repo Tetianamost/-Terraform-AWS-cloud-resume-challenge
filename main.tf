@@ -80,15 +80,10 @@ resource "aws_api_gateway_resource" "resume_website" {
   path_part   = "resume"
 }
 resource "aws_api_gateway_method" "resume_website_get" {
-  rest_api_id   = aws_api_gateway_rest_api.resume_website.id
-  resource_id   = aws_api_gateway_resource.resume_website.id
-  http_method   = "GET"
-  authorization = "NONE"
-}
-resource "aws_api_gateway_method_settings" "my_method_settings" {
-  rest_api_id   = aws_api_gateway_rest_api.resume_website.id
-  resource_id   = aws_api_gateway_resource.resume_website.id
-  method_path   = "${aws_api_gateway_resource.resume_website.path_part}/${aws_api_gateway_method.resume_website_get.http_method}"
+  rest_api_id      = aws_api_gateway_rest_api.resume_website.id
+  resource_id      = aws_api_gateway_resource.resume_website.id
+  http_method      = "GET"
+  authorization    = "NONE"
   api_key_required = false
 }
 
