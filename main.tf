@@ -213,8 +213,7 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attachment" {
 }
 
 resource "aws_api_gateway_rest_api" "resume_website" {
-  name     = "my-resume-website-api"
-  role_arn = aws_iam_role.api_gateway_service_role.arn
+  name = "my-resume-website-api"
 }
 
 resource "aws_api_gateway_resource" "resume_website" {
@@ -300,6 +299,7 @@ resource "aws_api_gateway_deployment" "resume_website" {
     aws_api_gateway_method_response.resume_website_get,
     aws_api_gateway_integration_response.lambda_integration_response
   ]
+  role_arn = aws_iam_role.api_gateway_service_role.arn
 }
 
 #Create an output with the API Gateway endpoint URL
