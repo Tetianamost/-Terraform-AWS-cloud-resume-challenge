@@ -182,7 +182,7 @@ resource "aws_lambda_permission" "allow_execute" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.resume_website.arn
   principal     = "apigateway.amazonaws.com"
-  source_arn    = ${aws_api_gateway_rest_api.resume_website.execution_arn}/*"
+  source_arn    = "${aws_api_gateway_rest_api.resume_website.execution_arn}/*"
 }
 
 
