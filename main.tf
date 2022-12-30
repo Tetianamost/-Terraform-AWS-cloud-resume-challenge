@@ -115,29 +115,13 @@ resource "aws_api_gateway_method_response" "resume_website_get" {
 
 # Set up an integration response for the integration
 resource "aws_api_gateway_integration_response" "lambda_integration_response" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  resource_id = aws_api_gateway_resource.resume_website.id
-  http_method = aws_api_gateway_method.resume_website_get.http_method
-  status_code = aws_api_gateway_method_response.resume_website_get.status_code
-}
+  rest_api_id             = aws_api_gateway_rest_api.resume_website.id
+  resource_id             = aws_api_gateway_resource.resume_website.id
+  http_method             = aws_api_gateway_method.resume_website_get.http_method
+  status_code             = aws_api_gateway_method_response.resume_website_get.status_code
+  integration_http_method = "ANY"
+  uri                     = aws_lambda_function.resume_website.invoke_arn
 
-
-#Set up a deployment for the API Gateway
-resource "aws_api_gateway_deployment" "resume_website" {
-  rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  stage_name  = "dev"
-  depends_on = [
-    aws_api_gateway_method.resume_website_get,
-    aws_api_gateway_integration.lambda_integration,
-    aws_api_gateway_method_response.resume_website_get,
-    aws_api_gateway_integration_response.lambda_integration_response
-  ]
-}
-
-#Create an output with the API Gateway endpoint URL
-
-output "api_endpoint_url" {
-  value = aws_api_gateway_deployment.resume_website.invoke_url
 }
 resource "aws_api_gateway_method" "resume_website_options" {
   rest_api_id   = aws_api_gateway_rest_api.resume_website.id
@@ -167,6 +151,25 @@ resource "aws_api_gateway_method_response" "resume_website_options" {
   }
 }
 
+
+
+#Set up a deployment for the API Gateway
+resource "aws_api_gateway_deployment" "resume_website" {
+  rest_api_id = aws_api_gateway_rest_api.resume_website.id
+  stage_name  = "dev"
+  depends_on = [
+    aws_api_gateway_method.resume_website_get,
+    aws_api_gateway_integration.lambda_integration,
+    aws_api_gateway_method_response.resume_website_get,
+    aws_api_gateway_integration_response.lambda_integration_response
+  ]
+}
+
+#Create an output with the API Gateway endpoint URL
+
+output "api_endpoint_url" {
+  value = aws_api_gateway_deployment.resume_website.invoke_url
+}
 
 # Create the Lambda function
 resource "aws_lambda_function" "resume_website" {
