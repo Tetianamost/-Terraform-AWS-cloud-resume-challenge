@@ -214,6 +214,25 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attachment" {
 
 resource "aws_api_gateway_rest_api" "resume_website" {
   name = "my-resume-website-api"
+  body = jsonencode({
+    openapi = "3.0.1"
+    info = {
+
+      version = "1.0"
+    }
+    paths = {
+      resume = {
+        get = {
+          x-amazon-apigateway-integration = {
+            httpMethod           = "ANY"
+            payloadFormatVersion = "1.0"
+            type                 = "AWS_PROXY"
+            uri                  = aws_lambda_function.resume_website.invoke_arn
+          }
+        }
+      }
+    }
+  })
   endpoint_configuration {
     types = ["REGIONAL"]
   }
