@@ -130,10 +130,6 @@ resource "aws_api_gateway_integration" "lambda_integration_options" {
   resource_id = aws_api_gateway_resource.resume_website.id
   http_method = aws_api_gateway_method.resume_website_options.http_method
   type        = "AWS_PROXY"
-
-  integration_http_method = "ANY"
-  uri                     = aws_lambda_function.resume_website.invoke_arn
-
 }
 resource "aws_api_gateway_method_response" "resume_website_options" {
   rest_api_id = aws_api_gateway_rest_api.resume_website.id
