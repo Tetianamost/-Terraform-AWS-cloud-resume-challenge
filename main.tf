@@ -77,7 +77,7 @@ resource "aws_api_gateway_rest_api" "resume_website" {
 resource "aws_api_gateway_resource" "resume_website" {
   rest_api_id = aws_api_gateway_rest_api.resume_website.id
   parent_id   = aws_api_gateway_rest_api.resume_website.root_resource_id
-  path_part   = "resume"
+  path_part   = "{proxy+}"
 }
 resource "aws_api_gateway_method" "resume_website_get" {
   rest_api_id      = aws_api_gateway_rest_api.resume_website.id
@@ -85,6 +85,11 @@ resource "aws_api_gateway_method" "resume_website_get" {
   http_method      = "ANY"
   authorization    = "NONE"
   api_key_required = false
+
+  request_parameters = {
+    "method.request.path.proxy" = true
+  }
+
 }
 
 resource "aws_api_gateway_integration" "lambda_integration" {
@@ -102,6 +107,9 @@ resource "aws_api_gateway_method_response" "resume_website_get" {
   resource_id = aws_api_gateway_resource.resume_website.id
   http_method = aws_api_gateway_method.resume_website_get.http_method
   status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
 }
 
 
@@ -117,7 +125,7 @@ resource "aws_api_gateway_integration_response" "lambda_integration_response" {
 #Set up a deployment for the API Gateway
 resource "aws_api_gateway_deployment" "resume_website" {
   rest_api_id = aws_api_gateway_rest_api.resume_website.id
-  stage_name  = "DEV2"
+  stage_name  = "dev"
   depends_on = [
     aws_api_gateway_method.resume_website_get,
     aws_api_gateway_integration.lambda_integration,
@@ -152,6 +160,11 @@ resource "aws_api_gateway_method_response" "resume_website_options" {
   resource_id = aws_api_gateway_resource.resume_website.id
   http_method = aws_api_gateway_method.resume_website_options.http_method
   status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
 }
 
 
