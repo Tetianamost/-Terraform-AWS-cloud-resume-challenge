@@ -52,6 +52,8 @@ resource "aws_cloudfront_distribution" "resume_website" {
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD", "OPTIONS"]
     min_ttl                = 86400
+    default_ttl            = 172800
+    max_ttl                = 259200
     forwarded_values {
       query_string = false
       headers = [
