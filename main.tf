@@ -117,52 +117,7 @@ resource "aws_lambda_permission" "allow_s3_access" {
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.resume_website.arn
 }
-# Create the IAM policy
-resource "aws_iam_policy" "api_gateway_lambda_policy" {
-  name        = "api_gateway_lambda_policy"
-  description = "Grants API Gateway permission to invoke Lambda functions"
-  policy      = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-      {
-          "Sid": "VisualEditor0",
-          "Effect": "Allow",
-          "Action": "lambda:*",
-          "Resource": "*"
-      }
-  ]
-}
-EOF
-}
 
-# Create the IAM role for API Gateway
-resource "aws_iam_role" "api_gateway_service_role" {
-  name = "api_gateway_service_role"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "apigateway.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
-}
-
-# Attach the policy to the IAM role
-resource "aws_iam_policy_attachment" "api_gateway_lambda_policy_attachment" {
-  name       = "api_gateway_lambda_policy_attachment"
-  policy_arn = aws_iam_policy.api_gateway_lambda_policy.arn
-  roles      = [aws_iam_role.api_gateway_service_role.name]
-}
 
 
 resource "aws_iam_role" "lambda_role" {
@@ -224,7 +179,7 @@ resource "aws_api_gateway_rest_api" "resume_website" {
     "title": "my-resume-website-api"
   },
   "host": "65gocpoiak.execute-api.us-east-1.amazonaws.com",
-  "basePath": "/dev1",
+  "basePath": "/dev",
   "schemes": ["https"],
   "paths": {
     "/": {
