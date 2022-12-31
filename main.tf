@@ -220,8 +220,7 @@ resource "aws_api_gateway_rest_api" "resume_website" {
     }
   },
   "definitions": {
-    "
-Empty": {
+    "Empty": {
 "type": "object",
 "title": "Empty Schema"
 }
