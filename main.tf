@@ -173,35 +173,63 @@ resource "aws_api_gateway_rest_api" "resume_website" {
 
   body = <<EOF
 {
-  "swagger": "2.0",
-  "info": {
-    "version": "2022-12-30T20:56:24Z",
-    "title": "my-resume-website-api"
-  },
-  "host": "65gocpoiak.execute-api.us-east-1.amazonaws.com",
-  "basePath": "/dev",
-  "schemes": ["https"],
-  "paths": {
-    "/": {
-      "x-amazon-apigateway-any-method": {
-        "produces": ["application/json"],
-        "responses": {
-          "200": {
-            "description": "200 response",
-            "schema": {
-              "$ref": "#/definitions/Empty"
-            }
-          }
-        }
-      }
+  "swagger" = "2.0"
+
+"info" = {
+  "version" = "2022-12-31T04:11:35Z"
+
+  "title" = "my-resume-website-api"
+}
+
+"host" = "65gocpoiak.execute-api.us-east-1.amazonaws.com"
+
+"basePath" = "/dev1"
+
+"schemes" = ["https"]
+
+"paths" "/" "options" {
+  "consumes" = ["application/json"]
+
+  "produces" = ["application/json"]
+
+  "responses" "200" {
+    "description" = "200 response"
+
+    "schema" = {
+      "$ref" = "#/definitions/Empty"
     }
-  },
-  "definitions": {
-    "Empty": {
-      "type": "object",
-      "title": "Empty Schema"
+
+    "headers" "Access-Control-Allow-Origin" {
+      "type" = "string"
+    }
+
+    "headers" "Access-Control-Allow-Methods" {
+      "type" = "string"
+    }
+
+    "headers" "Access-Control-Allow-Headers" {
+      "type" = "string"
     }
   }
+}
+
+"paths" "/" "x-amazon-apigateway-any-method" {
+  "produces" = ["application/json"]
+
+  "responses" "200" {
+    "description" = "200 response"
+
+    "schema" = {
+      "$ref" = "#/definitions/Empty"
+    }
+  }
+}
+
+"definitions" "Empty" {
+  "type" = "object"
+
+  "title" = "Empty Schema"
+}
 }
 EOF
 }
