@@ -173,12 +173,6 @@ resource "aws_api_gateway_rest_api" "resume_website" {
 
   body = <<EOF
 {
-  resource "aws_api_gateway_rest_api" "resume_website" {
-  name        = "my-resume-website-api"
-  description = "API for my resume website"
-
-  body = <<EOF
-{
   "swagger": "2.0",
   "info": {
     "version": "2022-12-31T04:11:35Z",
