@@ -62,7 +62,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
     max_ttl                = 0
     forwarded_values {
       query_string = false
-      headers      = ["*"]
+      headers = ["Access-Control-Request-Headers", "Access-Control-Request-Method", "Origin"]
       cookies {
         forward = "none"
       }
