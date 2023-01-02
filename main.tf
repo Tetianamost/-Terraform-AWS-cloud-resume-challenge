@@ -237,7 +237,7 @@ resource "aws_api_gateway_method" "api_root" {
   resource_id   = aws_api_gateway_rest_api.api[0].root_resource_id
   http_method   = "ANY"
   authorization = "NONE"
-   
+
 }
 
 resource "aws_api_gateway_integration" "api_root" {
@@ -339,7 +339,7 @@ resource "aws_api_gateway_integration_response" "resource_options_integration_re
 resource "aws_api_gateway_method_response" "cors_headers" {
   rest_api_id = aws_api_gateway_rest_api.api[0].id
   resource_id = aws_api_gateway_resource.api[0].id
-  http_method = "GET"
+  http_method = aws_api_gateway_method.resource_options[0].http_method
   status_code = "200"
 
   response_parameters = {
@@ -351,7 +351,7 @@ resource "aws_api_gateway_method_response" "cors_headers" {
 resource "aws_api_gateway_integration_response" "cors_headers" {
   rest_api_id = aws_api_gateway_rest_api.api[0].id
   resource_id = aws_api_gateway_resource.api[0].id
-  http_method = "GET"
+  http_method = aws_api_gateway_method.resource_options[0].http_method
   status_code = "200"
 
   response_parameters = {
