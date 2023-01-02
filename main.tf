@@ -319,7 +319,13 @@ resource "aws_api_gateway_method_response" "resource_options_200" {
   }
 }
 
+resource "aws_api_gateway_deployment" "api" {
+  count = "1"
 
+  depends_on  = [aws_api_gateway_integration_response.resource_options_integration_response[0], aws_api_gateway_integration.api[0]]
+  rest_api_id = aws_api_gateway_rest_api.api[0].id
+  stage_name  = "dev1"
+}
 
 resource "aws_route53_zone" "resume_website" {
   name = "bythebeach.store"
