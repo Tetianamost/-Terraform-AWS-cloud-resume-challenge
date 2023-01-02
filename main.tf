@@ -23,7 +23,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
   wait_for_deployment = true
   origin {
     domain_name = aws_s3_bucket.resume_website.website_endpoint
-    origin_id   = "CustomOrigin"
+    origin_id   = "bythebeach.store"
 
     custom_origin_config {
       origin_ssl_protocols     = ["TLSv1", "TLSv1.1", "TLSv1.2"]
@@ -53,7 +53,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
   aliases = ["resume.bythebeach.store", "bythebeach.store", "www.bythebeach.store"]
 
   default_cache_behavior {
-    target_origin_id       = "CustomOrigin"
+    target_origin_id       = "bythebeach.store"
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD", "OPTIONS"]
@@ -179,7 +179,7 @@ resource "aws_iam_policy" "api_gateway_access" {
     {
       "Effect": "Allow",
       "Action": "cloudfront:GetDistribution",
-      "Resource": "arn:aws:cloudfront::${aws_caller_identity}:distribution/${aws_cloudfront_distribution.resume_website.id}"
+      "Resource": "arn:aws:cloudfront:${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.resume_website.id}"
     },
     {
       "Effect": "Allow",
@@ -222,7 +222,7 @@ resource "aws_iam_role_policy_attachment" "api_gateway_access" {
 
 resource "aws_api_gateway_rest_api" "api" {
   count = "1"
-  role  = aws_iam_role.api_gateway_role.arn
+
 
   name = "API for my resume website"
   endpoint_configuration {
@@ -237,6 +237,7 @@ resource "aws_api_gateway_method" "api_root" {
   resource_id   = aws_api_gateway_rest_api.api[0].root_resource_id
   http_method   = "ANY"
   authorization = "NONE"
+   
 }
 
 resource "aws_api_gateway_integration" "api_root" {
