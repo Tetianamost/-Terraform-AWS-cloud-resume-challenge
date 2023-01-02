@@ -7,6 +7,12 @@ resource "aws_s3_bucket" "resume_website" {
   website {
     index_document = "index.html"
   }
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "HEAD", "PUT", "POST", "DELETE"]
+    allowed_origins = ["*"]
+    max_age_seconds = 3000
+  }
 }
 
 output "s3_website_endpoint" {
