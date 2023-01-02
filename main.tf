@@ -44,19 +44,19 @@ resource "aws_cloudfront_distribution" "resume_website" {
     }
   }
 
-  aliases = ["resume.bythebeach.store", "bythebeach.store"]
+  aliases = ["resume.bythebeach.store", "bythebeach.store", "www.bythebeach.store"]
 
   default_cache_behavior {
     target_origin_id       = "CustomOrigin"
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD", "OPTIONS"]
-    min_ttl                = 86400
-    default_ttl            = 172800
-    max_ttl                = 259200
+    min_ttl                = 0
+    default_ttl            = 0
+    max_ttl                = 0
     forwarded_values {
       query_string = false
-      headers      = ["Origin"]
+      headers      = ["*"]
       cookies {
         forward = "none"
       }
