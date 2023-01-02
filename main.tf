@@ -169,6 +169,9 @@ resource "aws_api_gateway_rest_api" "api" {
   count = "1"
 
   name = "API for my resume website"
+  endpoint_configuration {
+    types = ["EDGE"]
+  }
 }
 
 resource "aws_api_gateway_method" "api_root" {
