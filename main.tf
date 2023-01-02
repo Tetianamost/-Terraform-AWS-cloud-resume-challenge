@@ -62,7 +62,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
     max_ttl                = 0
     forwarded_values {
       query_string = false
-      headers = ["Access-Control-Request-Headers", "Access-Control-Request-Method", "Origin"]
+      headers      = ["Access-Control-Request-Headers", "Access-Control-Request-Method", "Origin"]
       cookies {
         forward = "none"
       }
@@ -170,9 +170,59 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attachment" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.lambda_dynamodb_policy.arn
 }
+resource "aws_iam_policy" "api_gateway_access" {
+  name   = "api_gateway_access_policy"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "cloudfront:GetDistribution",
+      "Resource": "arn:aws:cloudfront::${aws_caller_identity}:distribution/${aws_cloudfront_distribution.resume_website.id}"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::${aws_s3_bucket.resume_website.id}/*",
+        "arn:aws:s3:::${aws_s3_bucket.resume_website.id}"
+      ]
+    }
+  ]
+}
+EOF
+}
+resource "aws_iam_role" "api_gateway_role" {
+  name = "api_gateway_role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "apigateway.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "api_gateway_access" {
+  role       = aws_iam_role.api_gateway_role.name
+  policy_arn = aws_iam_policy.api_gateway_access.arn
+}
 
 resource "aws_api_gateway_rest_api" "api" {
   count = "1"
+  role  = aws_iam_role.api_gateway_role.arn
 
   name = "API for my resume website"
   endpoint_configuration {
