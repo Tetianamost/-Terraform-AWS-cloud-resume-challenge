@@ -336,30 +336,7 @@ resource "aws_api_gateway_integration_response" "resource_options_integration_re
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
 }
-resource "aws_api_gateway_method_response" "cors_headers" {
-  rest_api_id = aws_api_gateway_rest_api.api[0].id
-  resource_id = aws_api_gateway_resource.api[0].id
-  http_method = aws_api_gateway_method.resource_options[0].http_method
-  status_code = "200"
 
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-resource "aws_api_gateway_integration_response" "cors_headers" {
-  rest_api_id = aws_api_gateway_rest_api.api[0].id
-  resource_id = aws_api_gateway_resource.api[0].id
-  http_method = aws_api_gateway_method.resource_options[0].http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'*'"
-  }
-}
 resource "aws_api_gateway_method_response" "resource_options_200" {
   count = "1"
 
