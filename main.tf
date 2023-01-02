@@ -323,6 +323,20 @@ resource "aws_api_gateway_deployment" "api" {
   rest_api_id = aws_api_gateway_rest_api.api[0].id
   stage_name  = "dev1"
 }
+resource "aws_api_gateway_domain_name" "api" {
+  count = "1"
+
+  certificate_arn = aws_acm_certificate.resume_website.arn
+  domain_name     = aws_route53_zone.resume_website.name
+}
+
+resource "aws_api_gateway_base_path_mapping" "api" {
+  count = 1
+
+  api_id      = aws_api_gateway_rest_api.api[0].id
+  stage_name  = aws_api_gateway_deployment.api[0].stage_name
+  domain_name = aws_api_gateway_domain_name.api[0].domain_name
+}
 
 resource "aws_route53_zone" "resume_website" {
   name = "bythebeach.store"
