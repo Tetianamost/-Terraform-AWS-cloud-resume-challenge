@@ -9,9 +9,9 @@ resource "aws_s3_bucket" "resume_website" {
   }
   cors_rule {
     allowed_headers = ["*"]
-    allowed_methods = ["GET", "HEAD", "PUT", "POST", "DELETE"]
+    allowed_methods = ["GET", "PUT", "POST", "DELETE"]
     allowed_origins = ["*"]
-    max_age_seconds = 3000
+    max_age_seconds = 0
   }
 }
 
