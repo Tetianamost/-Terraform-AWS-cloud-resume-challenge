@@ -56,7 +56,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
     max_ttl                = 259200
     forwarded_values {
       query_string = false
-     headers         = ["Origin"]
+      headers      = ["Origin"]
       cookies {
         forward = "none"
       }
@@ -165,68 +165,141 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attachment" {
   policy_arn = aws_iam_policy.lambda_dynamodb_policy.arn
 }
 
-resource "aws_api_gateway_rest_api" "resume_website" {
-  name        = "my-resume-website-api"
-  description = "API for my resume website"
+resource "aws_api_gateway_rest_api" "api" {
+  count = "1"
 
-  body = <<EOF
-{
-  "swagger": "2.0",
-  "info": {
-    "version": "2022-12-31T04:11:35Z",
-    "title": "my-resume-website-api"
-  },
-  "host": "65gocpoiak.execute-api.us-east-1.amazonaws.com",
-  "basePath": "/dev1",
-  "schemes": ["https"],
-  "paths": {
-    "/": {
-      "options": {
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "responses": {
-          "200": {
-            "description": "200 response",
-            "schema": {
-              "$ref": "#/definitions/Empty"
-            },
-            "headers": {
-              "Access-Control-Allow-Origin": {
-                "type": "string"
-              },
-              "Access-Control-Allow-Methods": {
-                "type": "string"
-              },
-              "Access-Control-Allow-Headers": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "x-amazon-apigateway-any-method": {
-        "produces": ["application/json"],
-        "responses": {
-          "200": {
-            "description": "200 response",
-            "schema": {
-              "$ref": "#/definitions/Empty"
-            }
-          }
-        }
-      }
-    }
-  },
-  "definitions": {
-    "Empty": {
-"type": "object",
-"title": "Empty Schema"
-}
-}
-}
-EOF
+  name = "API for my resume website"
 }
 
+resource "aws_api_gateway_method" "api_root" {
+  count = "1"
+
+  rest_api_id   = aws_api_gateway_rest_api.api[0].id
+  resource_id   = aws_api_gateway_rest_api.api[0].root_resource_id
+  http_method   = "ANY"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "api_root" {
+  count = "1"
+
+  rest_api_id = aws_api_gateway_rest_api.api[0].id
+  resource_id = aws_api_gateway_rest_api.api[0].root_resource_id
+  http_method = aws_api_gateway_method.api_root[0].http_method
+
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.resume_website.invoke_arn
+}
+
+resource "aws_api_gateway_resource" "api" {
+  count = "1"
+
+  rest_api_id = aws_api_gateway_rest_api.api[0].id
+  parent_id   = aws_api_gateway_rest_api.api[0].root_resource_id
+  path_part   = "{proxy+}"
+}
+
+resource "aws_api_gateway_method" "api" {
+  count = "1"
+
+  rest_api_id   = aws_api_gateway_rest_api.api[0].id
+  resource_id   = aws_api_gateway_resource.api[0].id
+  http_method   = "ANY"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "api" {
+  count = "1"
+
+  rest_api_id = aws_api_gateway_rest_api.api[0].id
+  resource_id = aws_api_gateway_method.api[0].resource_id
+  http_method = aws_api_gateway_method.api[0].http_method
+
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.resume_website.invoke_arn
+}
+data "aws_caller_identity" "current" {}
+
+output "aws_account_id" {
+  value = data.aws_caller_identity.current.account_id
+}
+
+resource "aws_lambda_permission" "apigw" {
+  count = "1"
+
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.resume_website.arn
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api[0].id}/*/*"
+}
+
+
+// copied from: https://github.com/carrot/terraform-api-gateway-cors-module/blob/master/main.tf
+resource "aws_api_gateway_method" "resource_options" {
+  count = "1"
+
+  rest_api_id   = aws_api_gateway_rest_api.api[0].id
+  resource_id   = aws_api_gateway_resource.api[0].id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "resource_options_integration" {
+  count = "1"
+
+  rest_api_id = aws_api_gateway_rest_api.api[0].id
+  resource_id = aws_api_gateway_resource.api[0].id
+  http_method = aws_api_gateway_method.resource_options[0].http_method
+  type        = "MOCK"
+  request_templates = {
+    "application/json" = <<PARAMS
+{ "statusCode": 200 }
+PARAMS
+  }
+}
+
+resource "aws_api_gateway_integration_response" "resource_options_integration_response" {
+  count = "1"
+
+  depends_on  = ["aws_api_gateway_integration.resource_options_integration[0]"]
+  rest_api_id = aws_api_gateway_rest_api.api[0].id
+  resource_id = aws_api_gateway_resource.api[0].id
+  http_method = aws_api_gateway_method.resource_options[0].http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+}
+
+resource "aws_api_gateway_method_response" "resource_options_200" {
+  count = "1"
+
+  depends_on      = ["aws_api_gateway_method.resource_options[0]"]
+  rest_api_id     = aws_api_gateway_rest_api.api[0].id
+  resource_id     = aws_api_gateway_resource.api[0].id
+  http_method     = "OPTIONS"
+  status_code     = "200"
+  response_models = { "application/json" = "Empty" }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+resource "aws_api_gateway_deployment" "api" {
+  count = "1"
+
+  depends_on  = ["aws_api_gateway_integration_response.resource_options_integration_response[0]", "aws_api_gateway_integration.api[0]"]
+  rest_api_id = aws_api_gateway_rest_api.api[0].id
+  stage_name  = "dev1"
+}
 
 resource "aws_route53_zone" "resume_website" {
   name = "bythebeach.store"
