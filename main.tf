@@ -179,7 +179,7 @@ resource "aws_iam_policy" "api_gateway_access" {
     {
       "Effect": "Allow",
       "Action": "cloudfront:GetDistribution",
-      "Resource": "arn:aws:cloudfront:${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.resume_website.id}"
+      "Resource": "arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.resume_website.id}"
     },
     {
       "Effect": "Allow",
