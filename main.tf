@@ -11,6 +11,7 @@ resource "aws_s3_bucket" "resume_website" {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "PUT", "POST", "DELETE"]
     allowed_origins = ["*"]
+    expose_headers  = ["x-amz-server-side-encryption", "x-amz-request-id", "x-amz-id-2"]
     max_age_seconds = 0
   }
 }
@@ -331,7 +332,7 @@ resource "aws_api_gateway_integration_response" "resource_options_integration_re
   http_method = aws_api_gateway_method.resource_options[0].http_method
   status_code = "200"
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Headers" = "'x-amz-server-side-encryption,x-amz-request-id,x-amz-id-2'"
     "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
