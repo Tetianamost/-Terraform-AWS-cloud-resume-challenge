@@ -271,7 +271,7 @@ resource "aws_api_gateway_integration_response" "resource_options_integration_re
   http_method = aws_api_gateway_method.resource_options[0].http_method
   status_code = "200"
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date, Origin'",
     "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
@@ -296,7 +296,7 @@ resource "aws_api_gateway_integration_response" "cors_headers" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date, Origin'"
     "method.response.header.Access-Control-Allow-Methods" = "'*'"
   }
 }
