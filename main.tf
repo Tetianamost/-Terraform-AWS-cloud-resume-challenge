@@ -23,7 +23,7 @@ output "s3_website_endpoint" {
 }
 
 resource "aws_cloudfront_distribution" "resume_website" {
-  depends_on = [aws_s3_bucket.resume_website]
+  depends_on          = [aws_s3_bucket.resume_website]
   wait_for_deployment = true
   origin {
     domain_name = aws_s3_bucket.resume_website.website_endpoint
@@ -300,6 +300,24 @@ resource "aws_api_gateway_integration_response" "api_root" {
   }
 }
 
+# Create the OPTIONS method for the resource
+resource "aws_api_gateway_method" "options" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_rest_api.api.root_resource_id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# Set the response headers for the OPTIONS method
+resource "aws_api_gateway_integration" "options" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_rest_api.api.root_resource_id
+  http_method = aws_api_gateway_method.options.http_method
+
+  type                    = "MOCK"
+  integration_http_method = "ANY"
+
+}
 
 
 resource "aws_api_gateway_deployment" "api_root" {
