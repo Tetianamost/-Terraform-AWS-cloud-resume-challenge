@@ -291,7 +291,7 @@ resource "aws_api_gateway_integration_response" "api_root" {
   http_method = aws_api_gateway_method.api_root.http_method
   status_code = "200"
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'*'",
     "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
 
