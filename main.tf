@@ -280,7 +280,7 @@ resource "aws_api_gateway_method_response" "api_root" {
     "method.response.header.Access-Control-Allow-Headers" = true,
     "method.response.header.Access-Control-Allow-Methods" = true,
     "method.response.header.Access-Control-Allow-Origin"  = true,
-    
+
   }
 }
 
@@ -290,10 +290,10 @@ resource "aws_api_gateway_integration_response" "api_root" {
   http_method = aws_api_gateway_method.api_root.http_method
   status_code = "200"
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'https://r1we4roe86.execute-api.us-east-1.amazonaws.com/dev1, https://d1qb2gxic1bjbn.cloudfront.net, resume.bythebeach.store '"
     "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    
+
   }
 }
 
