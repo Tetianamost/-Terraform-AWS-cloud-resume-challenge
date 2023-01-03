@@ -23,7 +23,7 @@ output "s3_website_endpoint" {
 }
 
 resource "aws_cloudfront_distribution" "resume_website" {
-  depends_on = [aws_s3_bucket.resume_website]
+  depends_on          = [aws_s3_bucket.resume_website]
   wait_for_deployment = true
   origin {
     domain_name = aws_s3_bucket.resume_website.website_endpoint
@@ -224,30 +224,33 @@ resource "aws_iam_role_policy_attachment" "api_gateway_access" {
   policy_arn = aws_iam_policy.api_gateway_access.arn
 }
 
-resource "aws_api_gateway_rest_api" "api" {
+resource "aws_api_gateway_rest_api" "resume-website" {
 
   name = "API for my resume website"
-  endpoint_configuration {
-    types = ["EDGE"]
-  }
+
+}
+resource "aws_api_gateway_resource" "resume-website" {
+
+  rest_api_id = aws_api_gateway_rest_api.resume-website.id
+  parent_id   = aws_api_gateway_rest_api.resume-website.root_resource_id
+  path_part   = "{proxy+}"
+
 }
 
-resource "aws_api_gateway_method" "api_root" {
-
-
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_rest_api.api.root_resource_id
-  http_method   = "GET"
+resource "aws_api_gateway_method" "resume-website" {
+  rest_api_id   = aws_api_gateway_rest_api.resume-website.id
+  resource_id   = aws_api_gateway_rest_api.resume-website.root_resource_id
+  http_method   = "ANY"
   authorization = "NONE"
 
 }
 
-resource "aws_api_gateway_integration" "api_root" {
 
 
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_rest_api.api.root_resource_id
-  http_method = aws_api_gateway_method.api_root.http_method
+resource "aws_api_gateway_integration" "resume-website" {
+  rest_api_id = aws_api_gateway_rest_api.resume-website.id
+  resource_id = aws_api_gateway_rest_api.resume-website.root_resource_id
+  http_method = aws_api_gateway_method.resume-website.http_method
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
@@ -262,52 +265,20 @@ output "aws_account_id" {
 }
 
 resource "aws_lambda_permission" "apigw" {
-
-
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.resume_website.arn
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api.id}/*/*"
-}
-resource "aws_api_gateway_method_response" "api_root" {
-
-  depends_on      = [aws_api_gateway_method.api_root]
-  rest_api_id     = aws_api_gateway_rest_api.api.id
-  resource_id     = aws_api_gateway_rest_api.api.root_resource_id
-  http_method     = aws_api_gateway_method.api_root.http_method
-  status_code     = 200
-  response_models = { "application/json" = "Empty" }
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = true,
-    "method.response.header.Access-Control-Allow-Methods" = true,
-    "method.response.header.Access-Control-Allow-Origin"  = true,
-
-  }
-}
-
-resource "aws_api_gateway_integration_response" "api_root" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_rest_api.api.root_resource_id
-  http_method = aws_api_gateway_method.api_root.http_method
-  status_code = "200"
-  response_parameters = {
-
-    "method.response.header.Access-Control-Allow-Headers" = "'*'",
-    "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-
-  }
+  source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.resume-website.id}/*/*"
 }
 
 
 
-resource "aws_api_gateway_deployment" "api_root" {
 
-
-  depends_on  = [aws_api_gateway_integration_response.api_root, aws_api_gateway_integration.api_root]
-  rest_api_id = aws_api_gateway_rest_api.api.id
+resource "aws_api_gateway_deployment" "resume-website" {
+  depends_on  = [aws_api_gateway_integration.resume-website]
+  rest_api_id = aws_api_gateway_rest_api.resume-website.id
   stage_name  = "dev1"
 }
 
