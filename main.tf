@@ -23,6 +23,7 @@ output "s3_website_endpoint" {
 }
 
 resource "aws_cloudfront_distribution" "resume_website" {
+  depends_on = [aws_s3_bucket.resume_website]
   wait_for_deployment = true
   origin {
     domain_name = aws_s3_bucket.resume_website.website_endpoint
