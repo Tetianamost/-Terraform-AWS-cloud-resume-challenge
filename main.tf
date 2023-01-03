@@ -66,7 +66,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
     max_ttl                = 0
     forwarded_values {
       query_string = false
-      headers      = ["Access-Control-Request-Headers", "Access-Control-Request-Method", "Access-Control-Request-Origin"]
+      headers      = ["*"]
       cookies {
         forward = "none"
       }
@@ -293,9 +293,9 @@ resource "aws_api_gateway_integration_response" "api_root" {
   http_method = aws_api_gateway_method.api_root.http_method
   status_code = "200"
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'*'",
-    "method.response.header.Access-Control-Allow-Methods" = "'*'",
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type'",
+    "method.response.header.Access-Control-Allow-Methods" = "'GET'",
+    "method.response.header.Access-Control-Allow-Origin"  = "'http://resume.bythebeach.store.s3-website-us-east-1.amazonaws.com/'"
 
   }
 }
