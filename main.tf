@@ -23,11 +23,10 @@ output "s3_website_endpoint" {
 }
 
 resource "aws_cloudfront_distribution" "resume_website" {
-  depends_on          = [aws_s3_bucket.resume_website]
-  wait_for_deployment = true
+
   origin {
     domain_name = aws_s3_bucket.resume_website.website_endpoint
-    origin_id   = "bythebeach.store"
+    origin_id   = "OriginName"
 
     custom_origin_config {
       origin_ssl_protocols     = ["TLSv1", "TLSv1.1", "TLSv1.2"]
@@ -57,7 +56,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
 
   default_cache_behavior {
 
-    target_origin_id       = "bythebeach.store"
+    target_origin_id       = "OriginName"
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD", "OPTIONS"]
