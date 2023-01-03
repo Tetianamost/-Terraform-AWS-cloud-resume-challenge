@@ -9,7 +9,7 @@ resource "aws_s3_bucket" "resume_website" {
   }
   cors_rule {
     allowed_headers = ["*"]
-    allowed_methods = ["GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD", "PATCH"]
+    allowed_methods = ["GET", "PUT", "POST", "DELETE", "HEAD", "PATCH"]
     allowed_origins = ["*"]
     expose_headers  = ["ETag"]
     max_age_seconds = 0
@@ -268,26 +268,6 @@ resource "aws_lambda_permission" "apigw" {
 
   source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api.id}/*/*"
 }
-
-
-// copied from: https://github.com/carrot/terraform-api-gateway-cors-module/blob/master/main.tf
-
-
-
-
-resource "aws_api_gateway_integration_response" "api_root" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_rest_api.api.root_resource_id
-  http_method = aws_api_gateway_method.api_root.http_method
-  status_code = "200"
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'*'"
-    "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    
-  }
-}
-
 resource "aws_api_gateway_method_response" "api_root" {
 
   depends_on      = [aws_api_gateway_method.api_root]
@@ -303,6 +283,21 @@ resource "aws_api_gateway_method_response" "api_root" {
     
   }
 }
+
+resource "aws_api_gateway_integration_response" "api_root" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_rest_api.api.root_resource_id
+  http_method = aws_api_gateway_method.api_root.http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'*'"
+    "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    
+  }
+}
+
+
 
 resource "aws_api_gateway_deployment" "api_root" {
 
