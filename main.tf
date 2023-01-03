@@ -237,7 +237,7 @@ resource "aws_api_gateway_method" "api_root" {
 
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_rest_api.api.root_resource_id
-  http_method   = "ANY"
+  http_method   = "GET"
   authorization = "NONE"
 
 }
