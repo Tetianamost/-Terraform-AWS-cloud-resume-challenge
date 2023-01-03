@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "resume_website" {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "PUT", "POST", "DELETE", "HEAD"]
     allowed_origins = ["*"]
-    expose_headers  = ["ETag"]
+    expose_headers  = []
     max_age_seconds = 0
   }
 }
@@ -56,14 +56,14 @@ resource "aws_cloudfront_distribution" "resume_website" {
   default_cache_behavior {
     target_origin_id       = "bythebeach.store"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    allowed_methods        = ["GET", "OPTIONS"]
+    cached_methods         = ["GET", "OPTIONS"]
     min_ttl                = 0
     default_ttl            = 0
     max_ttl                = 0
     forwarded_values {
       query_string = false
-      headers      = ["Access-Control-Request-Headers", "Access-Control-Request-Method", "Access-Control-Request-Origin", "Origin"]
+      headers      = ["Access-Control-Request-Headers", "Access-Control-Request-Method", "Access-Control-Request-Origin"]
       cookies {
         forward = "none"
       }
@@ -290,7 +290,7 @@ resource "aws_api_gateway_integration_response" "api_root" {
   http_method = aws_api_gateway_method.api_root.http_method
   status_code = "200"
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'https://r1we4roe86.execute-api.us-east-1.amazonaws.com/dev1, https://d1qb2gxic1bjbn.cloudfront.net, resume.bythebeach.store '"
+    "method.response.header.Access-Control-Allow-Headers" = "'*'"
     "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
 
