@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "resume_website" {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "PUT", "POST", "DELETE"]
     allowed_origins = ["*"]
-    expose_headers  = ["x-amz-server-side-encryption", "x-amz-request-id", "x-amz-id-2"]
+    expose_headers  = ["ETag"]
     max_age_seconds = 0
   }
 }
@@ -222,8 +222,6 @@ resource "aws_iam_role_policy_attachment" "api_gateway_access" {
 }
 
 resource "aws_api_gateway_rest_api" "api" {
-  count = "1"
-
 
   name = "API for my resume website"
   endpoint_configuration {
@@ -232,55 +230,28 @@ resource "aws_api_gateway_rest_api" "api" {
 }
 
 resource "aws_api_gateway_method" "api_root" {
-  count = "1"
 
-  rest_api_id   = aws_api_gateway_rest_api.api[0].id
-  resource_id   = aws_api_gateway_rest_api.api[0].root_resource_id
-  http_method   = "ANY"
+
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_rest_api.api.root_resource_id
+  http_method   = "GET"
   authorization = "NONE"
 
 }
 
 resource "aws_api_gateway_integration" "api_root" {
-  count = "1"
 
-  rest_api_id = aws_api_gateway_rest_api.api[0].id
-  resource_id = aws_api_gateway_rest_api.api[0].root_resource_id
-  http_method = aws_api_gateway_method.api_root[0].http_method
 
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.resume_website.invoke_arn
-}
-
-resource "aws_api_gateway_resource" "api" {
-  count = "1"
-
-  rest_api_id = aws_api_gateway_rest_api.api[0].id
-  parent_id   = aws_api_gateway_rest_api.api[0].root_resource_id
-  path_part   = "{proxy+}"
-}
-
-resource "aws_api_gateway_method" "api" {
-  count = "1"
-
-  rest_api_id   = aws_api_gateway_rest_api.api[0].id
-  resource_id   = aws_api_gateway_resource.api[0].id
-  http_method   = "ANY"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "api" {
-  count = "1"
-
-  rest_api_id = aws_api_gateway_rest_api.api[0].id
-  resource_id = aws_api_gateway_method.api[0].resource_id
-  http_method = aws_api_gateway_method.api[0].http_method
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_rest_api.api.root_resource_id
+  http_method = aws_api_gateway_method.api_root.http_method
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.resume_website.invoke_arn
 }
+
+
 data "aws_caller_identity" "current" {}
 
 output "aws_account_id" {
@@ -288,77 +259,56 @@ output "aws_account_id" {
 }
 
 resource "aws_lambda_permission" "apigw" {
-  count = "1"
+
 
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.resume_website.arn
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api[0].id}/*/*"
+  source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api.id}/*/*"
 }
 
 
 // copied from: https://github.com/carrot/terraform-api-gateway-cors-module/blob/master/main.tf
-resource "aws_api_gateway_method" "resource_options" {
-  count = "1"
 
-  rest_api_id   = aws_api_gateway_rest_api.api[0].id
-  resource_id   = aws_api_gateway_resource.api[0].id
-  http_method   = "OPTIONS"
-  authorization = "NONE"
-}
 
-resource "aws_api_gateway_integration" "resource_options_integration" {
-  count = "1"
 
-  rest_api_id = aws_api_gateway_rest_api.api[0].id
-  resource_id = aws_api_gateway_resource.api[0].id
-  http_method = aws_api_gateway_method.resource_options[0].http_method
-  type        = "MOCK"
-  request_templates = {
-    "application/json" = <<PARAMS
-{ "statusCode": 200 }
-PARAMS
-  }
-}
 
-resource "aws_api_gateway_integration_response" "resource_options_integration_response" {
-  count = "1"
-
-  depends_on  = [aws_api_gateway_integration.resource_options_integration[0]]
-  rest_api_id = aws_api_gateway_rest_api.api[0].id
-  resource_id = aws_api_gateway_resource.api[0].id
-  http_method = aws_api_gateway_method.resource_options[0].http_method
+resource "aws_api_gateway_integration_response" "api_root" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_rest_api.api.root_resource_id
+  http_method = aws_api_gateway_method.api_root.http_method
   status_code = "200"
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'x-amz-server-side-encryption,x-amz-request-id,x-amz-id-2'"
+    "method.response.header.Access-Control-Allow-Headers" = "'*'"
     "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Max-Age"       = "'*'"
   }
 }
 
-resource "aws_api_gateway_method_response" "resource_options_200" {
-  count = "1"
+resource "aws_api_gateway_method_response" "api_root" {
 
-  depends_on      = [aws_api_gateway_method.resource_options[0]]
-  rest_api_id     = aws_api_gateway_rest_api.api[0].id
-  resource_id     = aws_api_gateway_resource.api[0].id
-  http_method     = "OPTIONS"
-  status_code     = "200"
+  depends_on      = [aws_api_gateway_method.api_root]
+  rest_api_id     = aws_api_gateway_rest_api.api.id
+  resource_id     = aws_api_gateway_rest_api.api.root_resource_id
+  http_method     = aws_api_gateway_method.api_root.http_method
+  status_code     = 200
   response_models = { "application/json" = "Empty" }
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = true,
     "method.response.header.Access-Control-Allow-Methods" = true,
-    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Origin"  = true,
+    "method.rresponse.header.Access-Control-Max-Age"      = true
   }
 }
 
-resource "aws_api_gateway_deployment" "api" {
-  count = "1"
+resource "aws_api_gateway_deployment" "api_root" {
 
-  depends_on  = [aws_api_gateway_integration_response.resource_options_integration_response[0], aws_api_gateway_integration.api[0]]
-  rest_api_id = aws_api_gateway_rest_api.api[0].id
+
+  depends_on  = [aws_api_gateway_integration_response.api_root, aws_api_gateway_integration.api_root]
+  rest_api_id = aws_api_gateway_rest_api.api.id
   stage_name  = "dev1"
 }
 
