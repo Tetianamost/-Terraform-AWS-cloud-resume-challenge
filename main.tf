@@ -29,7 +29,6 @@ resource "aws_cloudfront_distribution" "resume_website" {
     domain_name = aws_s3_bucket.resume_website.website_endpoint
     origin_id   = "bythebeach.store"
 
-
     custom_origin_config {
       origin_ssl_protocols     = ["TLSv1", "TLSv1.1", "TLSv1.2"]
       http_port                = 80
