@@ -2,7 +2,7 @@ provider "aws" {
   region = "us-east-1"
 }
 resource "aws_s3_bucket" "resume_website" {
-  bucket = "bythebeach.store"
+  bucket = "resume.bythebeach.store"
   acl    = "public-read"
   website {
     index_document = "index.html"
@@ -11,8 +11,7 @@ resource "aws_s3_bucket" "resume_website" {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "PUT", "POST", "DELETE", "HEAD"]
     allowed_origins = ["*"]
-    expose_headers = ["ETag",
-    "x-amz-meta-custom-header"]
+    expose_headers = ["*"]
     max_age_seconds = 0
   }
 }
