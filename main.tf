@@ -27,7 +27,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
   wait_for_deployment = true
   origin {
     domain_name = aws_s3_bucket.resume_website.website_endpoint
-    origin_id   = "resume."
+    origin_id   = "resume.bythebeach.store"
 
     custom_origin_config {
       origin_ssl_protocols     = ["TLSv1", "TLSv1.1", "TLSv1.2"]
@@ -53,7 +53,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
     }
   }
 
-  aliases = ["resume.resume.", "resume.", "www.bythebeach.store"]
+  aliases = ["resume.bythebeach.store", "bythebeach.store", "www.bythebeach.store"]
 
   default_cache_behavior {
 
