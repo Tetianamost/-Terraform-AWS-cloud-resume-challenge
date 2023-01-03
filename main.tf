@@ -44,7 +44,6 @@ resource "aws_cloudfront_distribution" "resume_website" {
 
   enabled          = true
   is_ipv6_enabled  = true
-  retain_on_delete = true
 
   restrictions {
     geo_restriction {
@@ -52,7 +51,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
     }
   }
 
-  aliases = ["resume.bythebeach.store", "bythebeach.store", "www.bythebeach.store"]
+  aliases = ["bythebeach.store", "www.bythebeach.store","resume.bythebeach.store"]
 
   default_cache_behavior {
 
