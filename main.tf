@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "resume_website" {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "PUT", "POST", "DELETE", "HEAD"]
     allowed_origins = ["*"]
-    expose_headers = ["*"]
+    expose_headers = []
     max_age_seconds = 0
   }
 }
