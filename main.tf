@@ -9,7 +9,7 @@ resource "aws_s3_bucket" "resume_website" {
   }
   cors_rule {
     allowed_headers = ["*"]
-    allowed_methods = ["GET", "PUT", "POST", "DELETE"]
+    allowed_methods = ["GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD", "PATCH"]
     allowed_origins = ["*"]
     expose_headers  = ["ETag"]
     max_age_seconds = 0
@@ -284,7 +284,7 @@ resource "aws_api_gateway_integration_response" "api_root" {
     "method.response.header.Access-Control-Allow-Headers" = "'*'"
     "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Max-Age"       = "'*'"
+    
   }
 }
 
@@ -300,7 +300,7 @@ resource "aws_api_gateway_method_response" "api_root" {
     "method.response.header.Access-Control-Allow-Headers" = true,
     "method.response.header.Access-Control-Allow-Methods" = true,
     "method.response.header.Access-Control-Allow-Origin"  = true,
-    "method.rresponse.header.Access-Control-Max-Age"      = true
+    
   }
 }
 
