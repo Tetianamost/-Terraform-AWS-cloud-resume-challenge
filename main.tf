@@ -57,8 +57,8 @@ resource "aws_cloudfront_distribution" "resume_website" {
   default_cache_behavior {
     target_origin_id       = "bythebeach.store"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "OPTIONS"]
-    cached_methods         = ["GET", "OPTIONS"]
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
     min_ttl                = 0
     default_ttl            = 0
     max_ttl                = 0
