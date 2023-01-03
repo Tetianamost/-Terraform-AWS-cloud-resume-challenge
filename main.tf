@@ -17,6 +17,7 @@ resource "aws_s3_bucket" "resume_website" {
   }
 }
 
+
 output "s3_website_endpoint" {
   value = aws_s3_bucket.resume_website.website_endpoint
 }
@@ -36,7 +37,6 @@ resource "aws_cloudfront_distribution" "resume_website" {
     }
   }
 
-
   viewer_certificate {
     acm_certificate_arn = aws_acm_certificate.resume_website.arn
     ssl_support_method  = "sni-only"
@@ -55,6 +55,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
   aliases = ["resume.bythebeach.store", "bythebeach.store", "www.bythebeach.store"]
 
   default_cache_behavior {
+
     target_origin_id       = "bythebeach.store"
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
