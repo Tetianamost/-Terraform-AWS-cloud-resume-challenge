@@ -2,7 +2,7 @@ provider "aws" {
   region = "us-east-1"
 }
 resource "aws_s3_bucket" "resume_website" {
-  bucket = "bythebeach.store"
+  bucket = "resume.bythebeach.store"
   acl    = "public-read"
   website {
     index_document = "index.html"
@@ -26,7 +26,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
   wait_for_deployment = true
   origin {
     domain_name = aws_s3_bucket.resume_website.website_endpoint
-    origin_id   = "bythebeach.store"
+    origin_id   = "resume."
 
     custom_origin_config {
       origin_ssl_protocols     = ["TLSv1", "TLSv1.1", "TLSv1.2"]
@@ -52,7 +52,7 @@ resource "aws_cloudfront_distribution" "resume_website" {
     }
   }
 
-  aliases = ["resume.bythebeach.store", "bythebeach.store", "www.bythebeach.store"]
+  aliases = ["resume.resume.", "resume.", "www.bythebeach.store"]
 
   default_cache_behavior {
 
@@ -122,7 +122,7 @@ resource "aws_lambda_permission" "allow_s3_access" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.resume_website.arn
   principal     = "s3.amazonaws.com"
-  source_arn    = aws_s3_bucket.resume_website.arn
+  source_arn    = "arn:aws:s3:::my-resume-website-lambda"
 }
 
 
