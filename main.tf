@@ -272,12 +272,38 @@ resource "aws_lambda_permission" "apigw" {
 
   source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.resume-website.id}/*/*"
 }
+resource "aws_api_gateway_method_response" "resume-website" {
 
+  depends_on      = [aws_api_gateway_method.resume-website]
+  rest_api_id     = aws_api_gateway_rest_api.resume-website.id
+  resource_id     = aws_api_gateway_rest_api.resume-website.root_resource_id
+  http_method     = aws_api_gateway_method.resume-website.http_method
+  status_code     = 200
+  response_models = { "application/json" = "Empty" }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Origin"  = true,
 
+  }
+}
 
+resource "aws_api_gateway_integration_response" "resume-website" {
+  rest_api_id = aws_api_gateway_rest_api.resume-website.id
+  resource_id = aws_api_gateway_rest_api.resume-website.root_resource_id
+  http_method = aws_api_gateway_method.resume-website.http_method
+  status_code = "200"
+  response_parameters = {
+
+    "method.response.header.Access-Control-Allow-Headers" = "'*'",
+    "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET,PUT,PATCH,DELETE'",
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+
+  }
+}
 
 resource "aws_api_gateway_deployment" "resume-website" {
-  depends_on  = [aws_api_gateway_integration.resume-website]
+  depends_on  = [aws_api_gateway_integration_response.resume-website, aws_api_gateway_integration.resume-website]
   rest_api_id = aws_api_gateway_rest_api.resume-website.id
   stage_name  = "dev1"
 }
