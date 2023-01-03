@@ -229,13 +229,7 @@ resource "aws_api_gateway_rest_api" "resume-website" {
   name = "API for my resume website"
 
 }
-resource "aws_api_gateway_resource" "resume-website" {
 
-  rest_api_id = aws_api_gateway_rest_api.resume-website.id
-  parent_id   = aws_api_gateway_rest_api.resume-website.root_resource_id
-  path_part   = "{proxy+}"
-
-}
 
 resource "aws_api_gateway_method" "resume-website" {
   rest_api_id   = aws_api_gateway_rest_api.resume-website.id
